@@ -1,0 +1,33 @@
+#    __________       _____    ____
+#    |         \      |   |   /   /
+#    |    |     |     |   |  /   /
+#    |    |     |     |   | /   /      ____  ____
+#    |         /      |   |/   /       |  |_/  __\
+#    |         \      |       \        |   ___/
+#    |    |     |     |   |\   \       |  |
+#    |    |     |     |   | \   \      |  |        ______________
+#    |         /      |   |  \   \     |  |        |             |
+#
+
+# Languages that come with the plugin are: en_US and pt_BR. You can add any language by changing the file name to the language you want and editing the file.
+language: en_US
+
+# The maximum size of a message that a player can set for their shop. Setting this too high makes the shop list look awful
+max-message-length: 60
+
+# The amount of time in seconds that the player will be invulnerable to damage after a teleport
+invulnerable-time: 0
+
+# You can change the length of the countdown by giving a group the permission 'bkshop.countdown.<0-99>'. Example: bkshop.countdown.15 will give the group a countdown of 15 seconds
+# When true the teleport countdown will be canceled when a player moves
+cancel-on-move: false
+
+# How frequently the shop list is updated. (In seconds)
+shop-update-delay: 300
+
+# [0] Disables the frames
+# [1] Diamond style frame
+# [2] Emerald style frame
+# [3] Iron style frame
+# [4] Gold style frame
+frame: 3

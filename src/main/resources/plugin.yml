@@ -1,0 +1,6 @@
+name: BkShop
+version: ${project.version}
+main: me.bkrmt.bkshop.BkShop
+api-version: 1.13
+authors: [Bkr__]
+description: 'Setshop plugin'

@@ -1,0 +1,139 @@
+#    __________       _____    ____
+#    |         \      |   |   /   /
+#    |    |     |     |   |  /   /
+#    |    |     |     |   | /   /      ____  ____
+#    |         /      |   |/   /       |  |_/  __\
+#    |         \      |       \        |   ___/
+#    |    |     |     |   |\   \       |  |
+#    |    |     |     |   | \   \      |  |        ______________
+#    |         /      |   |  \   \     |  |        |             |
+#
+
+# This is where you can customize the commands of the plugin, their descriptions and usages in the help command
+# *-------------------*=/[Commands]\=*------------------*
+commands:
+
+  # Here you can change how the help message of the plugin will look like
+  help-format:
+    header: '&7*-------------------*=/[&2&lBkShop&7]\=*-------------------*'
+    help-section: '&7- &a{command} &f- &7{description}'
+    footer: '&7*-----------------*=[&aMade by: Bkr__&7]=*---------------*'
+
+  # Message when a player sends an incorrect usage of the command
+  usage-format: '&cUsage: {usage}'
+
+  #BkShop Command
+  bkshop:
+    command: 'bkshop'
+    description: 'Shows the help of the plugin.'
+    usage: '/bkshop'
+
+  #Shop Command
+  shop:
+    command: 'shop'
+    description: 'Teleports you to another player''s shop.'
+    usage: '/shop <player>'
+
+  #Shops Command
+  shops:
+    command: 'shops'
+    description: 'Opens a list of all the shops available.'
+    usage: '/shops'
+
+  #SetShop Command
+  setshop:
+    command: 'setshop'
+    description: 'Sets the location, color, or message of your shop.'
+    usage: '/setshop <shop | color | message>'
+    subcommands:
+      shop: 'shop'
+      color: 'color'
+      message: 'message'
+
+  #DelShop Command
+  delshop:
+    command: 'delshop'
+    description: 'Deletes your shop.'
+    usage: '/delshop'
+# *-----------------------*=[|]=*-----------------------*
+
+
+# Here you can change all the messages in the plugin
+# *-----------------*=/[Info Messages]\=*---------------*
+info:
+  message-set: '&aMessage set to {message}&a.'
+  color-set: '&aColor changed to &{color}{color}&a.'
+  shop-set: '&aShop set.'
+  shop-deleted: '&aShop removed.'
+  time-remaining: '&7Teleporting in &a{seconds}'
+  list-title: '     &8&lShops List Page {current-page}/{total-pages}'
+  main-menu-title: '                 &8&lShop'
+  shop-options-title: '         &8&lShop Options'
+  info-enable-visists: '&{color}Click to show your visits info in the shop list.'
+  info-disable-visists: '&{color}Click to hide your visits info in the shop list.'
+  info-status: '&7Shop status: {status}'
+  info-open: '&2Open'
+  info-closed: '&4Closed'
+  info-visit-status: '&7Visits info: {info-visibility}'
+  info-visit-public: '&2Public'
+  info-visit-public-message: '&eNow only you can see the visit information.'
+  info-visit-private-message: '&aNow everyone can see the visit information.'
+  info-visit-private: '&4Private'
+  info-last-visit: '&7Last to visit: &f{player}'
+  info-visits: '&7Visits: &f{visits}'
+  info-desc: '&7Message: &f{message}'
+  invulnerable-remaining: '&cInvulnerable for {seconds} seconds'
+  config-reloaded: '&aShops and configs successfully reloaded.'
+  warped:
+    title: '{player}''s shop'
+  shop-closed: '&eShop closed.'
+  shop-open: '&aShop open.'
+  return-name: '&c&lReturn'
+  return-desc: '&4Return to the previous page.'
+  next-name: '&2&lNext'
+  next-desc: '&aGo to the next page.'
+  shops-name: '&2&lShops'
+  visits-name: '&{color}&lConfigure Visit Info'
+  shops-desc: '&aPlayers shop list'
+  info-name: '&8&lInfo'
+  close-name: '&c&lClose shop'
+  close-desc: '&cTemporarily close your shop without deleting it'
+  open-name: '&a&lOpen shop'
+  open-desc: '&aRe-opens your shop'
+  admin-go-to-shop: '&oTeleport to this shop'
+  admin-close-shop: '&c&lClose this shop'
+  admin-open-shop: '&a&lOpen this shop'
+  admin-delete-shop: '&4&lDelete this shop'
+  delete-confirm-title: '&4&lConfirm delete?'
+  delete-sign: '&4&lDelete Shop'
+  delete-sign-lore: '&4&oAre you sure you want to delete this shop?'
+  delete-confirm: '&2&lClick here to confirm'
+  delete-decline: '&4&lClick here to decline'
+# *-----------------------*=[|]=*-----------------------*
+
+
+# *----------------*=/[Error Messages]\=*---------------*
+error:
+  invalid-page: '&cThe page number {page} does''t exist.'
+  invalid-message: '&cThe message may contain only letters, numbers or color symbols.'
+  large-message: '&cThe message must have a maximum of 64 characters.'
+  create-shop-first: '&cYou have to set a shop first.'
+  no-permission: '&cYou don''t have permission to do this.'
+  already-waiting: '&cYou are already waiting a teleport.'
+  unkown-shop: '&cThe player &4{player} &cdoesn''t have a shop.'
+  no-shop: '&cThis shop doesn''t exist.'
+  closed-shop: '&cThis shop is closed.'
+  no-created-shop: '&cNo one has created a shop yet.'
+  no-color: '&cYou didn''t type a color.'
+  invalid-color:
+    line1: '&cThe value &4{color} &cis not a valid color.'
+    line2: '&cType only a number from 0 to 9 or a letter from A to F, without the symbol {color-simbol}.'
+  cant-attack-now:
+    self: '&cYou can''t attack for {seconds} more seconds!'
+    others: '&cThis player can''t be attacked for {seconds} more seconds!'
+  warp-canceled-title: '&cTeleport canceled'
+  warp-canceled-cause:
+    dealt-damage: '&cYou attacked.'
+    took-damage: '&cYou took damage.'
+    moved: '&cYou moved.'
+# *-----------------------*=[|]=*-----------------------*

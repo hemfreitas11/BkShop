@@ -1,0 +1,139 @@
+#    __________       _____    ____
+#    |         \      |   |   /   /
+#    |    |     |     |   |  /   /
+#    |    |     |     |   | /   /      ____  ____
+#    |         /      |   |/   /       |  |_/  __\
+#    |         \      |       \        |   ___/
+#    |    |     |     |   |\   \       |  |
+#    |    |     |     |   | \   \      |  |        ______________
+#    |         /      |   |  \   \     |  |        |             |
+#
+
+# Aqui você pode editar os comandos do plugin, e suas descrições no comando de ajuda
+# *-------------------*=/[Comandos]\=*------------------*
+commands:
+
+  # Aqui você pode mudar a mensagem de ajuda do plugin
+  help-format:
+    header: '&7*-------------------*=/[&2&lBkLoja&7]\=*-------------------*'
+    help-section: '&7- &a{command} &f- &7{description}'
+    footer: '&7*-----------------*=[&aFeito por: Bkr__&7]=*---------------*'
+
+  # Mensagem para quando o jogador usar o comando incorretamente
+  usage-format: '&cUsage: {usage}'
+
+  #Comando BkShop
+  bkshop:
+    command: 'bkshop'
+    description: 'Mostra a ajuda do plugin.'
+    usage: '/bkshop'
+
+  #Comando Loja
+  shop:
+    command: 'loja'
+    description: 'Teleporta você para a loja de um jogador.'
+    usage: '/loja <jogador>'
+
+  #Comando Lojas
+  shops:
+    command: 'lojas'
+    description: 'Abre uma lista das lojas disponíveis.'
+    usage: '/lojas'
+
+  #Comando SetarLoja
+  setshop:
+    command: 'setloja'
+    description: 'Define o local da sua loja e adiciona ela na lista de lojas.'
+    usage: '/setloja <loja | cor | mensagem>'
+    subcommands:
+      shop: 'loja'
+      color: 'cor'
+      message: 'mensagem'
+
+  #Comando DelLoja
+  delshop:
+    command: 'delloja'
+    description: 'Deleta sua loja.'
+    usage: '/delloja'
+# *-----------------------*=[|]=*-----------------------*
+
+
+# Aqui você pode mudar todas as mensagens do plugin
+# *---------------*=/[Mensagens Gerais]\=*--------------*
+info:
+  message-set: '&aMensagem alterada para "{message}&a".'
+  color-set: '&aCor alterada para "&{color}{color}&a".'
+  shop-set: '&aLoja definida com sucesso.'
+  shop-deleted: '&aLoja removida com sucesso.'
+  time-remaining: '&7Teleportando em &a{seconds}'
+  list-title: '     &8&lLista Lojas Pag. {current-page}/{total-pages}'
+  main-menu-title: '                 &8&lLoja'
+  shop-options-title: '        &8&lOpcoes Loja'
+  info-enable-visists: '&{color}Clique para mostrar suas visitas na lista de lojas.'
+  info-disable-visists: '&{color}Clique para esconder suas visitas da lista de lojas.'
+  info-status: '&7Status da loja: {status}'
+  info-open: '&2Aberta'
+  info-closed: '&4Fechada'
+  info-visit-status: '&7Dados das visitas: {info-visibility}'
+  info-visit-public: '&2Publico'
+  info-visit-public-message: '&eAgora so voce pode ver as informacoes das visitas.'
+  info-visit-private-message: '&aAgora todos podem ver as informacoes das visitas.'
+  info-visit-private: '&4Privado'
+  info-last-visit: '&7Ultimo a visitar: &f{player}'
+  info-visits: '&7Visitas: &f{visits}'
+  info-desc: '&7Mensagem: &f{message}'
+  invulnerable-remaining: '&cInvulneravel por {seconds} segundos'
+  config-reloaded: '&aLojas e configuracoes recarregadas com sucesso.'
+  warped:
+    title: 'Loja de: {player}'
+  shop-closed: '&eSua loja foi fechada.'
+  shop-open: '&aSua loja foi reaberta.'
+  return-name: '&c&lVoltar'
+  return-desc: '&4Volta para a pagina anterior.'
+  next-name: '&2&lProximo'
+  next-desc: '&aVai para a proxima pagina.'
+  shops-name: '&2&lLojas'
+  visits-name: '&{color}&lConfigurar Visita'
+  shops-desc: '&aLista de lojas de jogadores'
+  info-name: '&8&lInfo'
+  close-name: '&c&lFechar Loja'
+  close-desc: '&cTemporariamente fecha sua loja sem deleta-la'
+  open-name: '&a&lAbrir Loja'
+  open-desc: '&aReabre sua loja'
+  admin-go-to-shop: '&oIr ate essa loja'
+  admin-close-shop: '&c&lFechar essa loja'
+  admin-open-shop: '&a&lAbrir essa loja'
+  admin-delete-shop: '&4&lDeletar essa loja'
+  delete-confirm-title: '&4&lConfirmar remover?'
+  delete-sign: '&4&lDeletar loja'
+  delete-sign-lore: '&4&oTem certeza que dejesa deletar a loja?'
+  delete-confirm: '&2&lClique aqui parar confirmar'
+  delete-decline: '&4&lClique aqui para negar'
+# *-----------------------*=[|]=*-----------------------*
+
+
+# *--------------*=/[Mensagem de Erro]\=*---------------*
+error:
+  invalid-page: '&cA pagina numero {page} nao existe.'
+  invalid-message: '&cA mensagem pode conter apenas letras, numeros ou simbolos de cor.'
+  large-message: '&cA mensagem deve ter no maximo 64 caracteres.'
+  create-shop-first: '&cVoce deve criar uma loja primeiro.'
+  no-permission: '&cVoce nao tem permissao para fazer isso.'
+  already-waiting: '&cVoce ja esta esperando um teleporte.'
+  unkown-shop: '&cO jogador &4{player} &cnao possui uma loja.'
+  no-shop: '&cVoce nao tem uma loja.'
+  closed-shop: '&cEssa loja esta fechada.'
+  no-created-shop: '&cNenhum jogador criou uma loja ainda.'
+  no-color: '&cVoce nao digitou nenhuma cor.'
+  invalid-color:
+    line1: '&cO valor &4{color} &cnao e uma cor valida.'
+    line2: '&cDigite apenas um numero de 0 ate 9 ou uma letra de A ate F, sem o simbolo {color-simbol}.'
+  cant-attack-now:
+    self: '&cVoce nao pode atacar por mais {seconds} segundos!'
+    others: '&cEsse jogador nao pode ser atacado por mais {seconds} segundos!'
+  warp-canceled-title: '&cTeleporte cancelado'
+  warp-canceled-cause:
+    dealt-damage: '&cVoce atacou.'
+    took-damage: '&cVoce sofreu dano.'
+    moved: '&cVoce se moveu.'
+# *-----------------------*=[|]=*-----------------------*
