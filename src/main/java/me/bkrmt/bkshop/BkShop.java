@@ -142,8 +142,6 @@ public final class BkShop extends BkPlugin {
         items[1].setItemMeta(meta);
         items[2].setItemMeta(meta);
         return items;
-
-
     }
 
     public static void closeShop(Player player, String shopOwner) {
