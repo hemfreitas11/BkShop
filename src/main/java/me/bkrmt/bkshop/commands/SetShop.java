@@ -31,13 +31,13 @@ public class SetShop extends Executor {
                 else sendUsage(sender);
             } else {
                 String fileName = sender.getName().toLowerCase() + ".yml";
-                if (!getPlugin().getFile("shops", fileName).exists()) {
+                if (!getPlugin().getFile("shops", fileName.toLowerCase()).exists()) {
                     sender.sendMessage(getPlugin().getLangFile().get("error.create-shop-first"));
                 } else {
                     if (args[0].equals(getPlugin().getLangFile().get("commands." + getLangKey() + ".subcommands.color"))) {
                         if (args.length == 2) {
                             if (Utils.isValidColor(args[1])) {
-                                Configuration config = getPlugin().getConfig("shops", fileName);
+                                Configuration config = getPlugin().getConfig("shops", fileName.toLowerCase());
                                 config.set("shop.color", args[1]);
                                 config.save(false);
                                 BkShop.getShopsMenu().reloadMenu();
@@ -71,7 +71,7 @@ public class SetShop extends Executor {
                             }
                             if (invalid) sender.sendMessage(getPlugin().getLangFile().get("error.invalid-message"));
                             else {
-                                Configuration config = getPlugin().getConfig("shops", fileName);
+                                Configuration config = getPlugin().getConfig("shops", fileName.toLowerCase());
                                 config.set("shop.message", mensagem);
                                 config.save(false);
                                 sender.sendMessage(Utils.translateColor(getPlugin().getLangFile().get("info.message-set", false).replace("{message}", mensagem)));

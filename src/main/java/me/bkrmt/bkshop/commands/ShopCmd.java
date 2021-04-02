@@ -24,13 +24,13 @@ public class ShopCmd extends Executor {
         } else {
             if (args.length == 1) {
                 String fileName = args[0].toLowerCase() + ".yml";
-                if (!getPlugin().getFile("shops", fileName).exists()) {
+                if (!getPlugin().getFile("shops", fileName.toLowerCase()).exists()) {
                     sender.sendMessage(getPlugin().getLangFile().get("error.unkown-shop").replace("{player}", args[0]));
                 } else {
                     if (sender.hasPermission("bkshop.admin")) {
                         new ShopOptionsMenu("info.shop-options-title", ((Player) sender), args[0].toLowerCase()).openMenu();
                     } else {
-                        goToShop(getPlugin(), sender, args[0]);
+                        goToShop(getPlugin(), sender, args[0].toLowerCase());
                     }
                 }
             } else if (args.length == 0) {
@@ -49,7 +49,7 @@ public class ShopCmd extends Executor {
             config.set("shop.last-visitor", sender.getName());
             config.save(false);
             if (config.getBoolean("shop.public-visits")) BkShop.getShopsMenu().reloadMenu();
-            new Teleport(plugin, sender, shopOwner, TeleportType.Loja);
+            new Teleport(plugin, sender, shopOwner.toLowerCase(), TeleportType.Loja);
         } else sender.sendMessage(plugin.getLangFile().get("error.closed-shop"));
     }
 }

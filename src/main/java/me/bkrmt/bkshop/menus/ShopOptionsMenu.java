@@ -39,7 +39,7 @@ public class ShopOptionsMenu extends ShopMenu {
                     if (button.getType().equals(plugin.getHandler().getItemManager().getPearl())) {
                         cancel();
                         event.getWhoClicked().closeInventory();
-                        ShopCmd.goToShop(plugin, event.getWhoClicked(), ChatColor.stripColor(button.getItemMeta().getDisplayName()));
+                        ShopCmd.goToShop(plugin, event.getWhoClicked(), ChatColor.stripColor(button.getItemMeta().getDisplayName()).toLowerCase());
                     } else if (button.getType().equals(Material.TNT)) {
                         cancel();
                         new DeleteMenu("info.delete-confirm-title", ChatColor.stripColor(

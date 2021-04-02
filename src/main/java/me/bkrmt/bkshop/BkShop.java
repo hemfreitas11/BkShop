@@ -149,14 +149,14 @@ public final class BkShop extends BkPlugin {
     public static void closeShop(Player player, String shopOwner) {
         player.closeInventory();
         player.sendMessage(plugin.getLangFile().get("info.shop-closed"));
-        Configuration config = plugin.getConfig("shops", shopOwner);
+        Configuration config = plugin.getConfig("shops", shopOwner.toLowerCase());
         config.set("shop.open", false);
         config.save(false);
         BkShop.getShopsMenu().reloadMenu();
     }
 
     public static void openShop(Player player, String shopOwner) {
-        Configuration config = plugin.getConfig("shops", shopOwner);
+        Configuration config = plugin.getConfig("shops", shopOwner.toLowerCase());
         config.set("shop.open", true);
         config.save(false);
         player.closeInventory();
@@ -168,14 +168,14 @@ public final class BkShop extends BkPlugin {
         File lojasFolder = new File(plugin.getDataFolder().getPath() + File.separator + "shops");
         if (!lojasFolder.exists()) lojasFolder.mkdir();
         int filesLenght = lojasFolder.listFiles().length;
-        String[] lojas = new String[filesLenght];
+        String[] lojas;
         if (filesLenght == 0) {
             lojas = new String[]{"-"};
         } else {
             File[] lojasLista = lojasFolder.listFiles();
             lojas = new String[filesLenght];
             for (int c = 0; c < filesLenght; c++) {
-                lojas[c] = plugin.getConfig("shops", lojasLista[c].getName()).getString("shop.player");
+                lojas[c] = plugin.getConfig("shops", lojasLista[c].getName().toLowerCase()).getString("shop.player");
             }
         }
         return lojas;

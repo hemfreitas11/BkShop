@@ -40,7 +40,7 @@ public class ButtonFunctions implements Listener {
                         BkShop.getShopsMenu().displayMenu(((Player) event.getWhoClicked()), paginaAtual + 1);
                     } else if (!button.getItemMeta().getDisplayName().equalsIgnoreCase(" ")) {
                         if (event.getWhoClicked().hasPermission("bkshop.admin")) {
-                            if (new File(plugin.getDataFolder() + File.separator + "shops", ChatColor.stripColor(button.getItemMeta().getDisplayName()) + ".yml").exists()) {
+                            if (new File(plugin.getDataFolder() + File.separator + "shops", ChatColor.stripColor(button.getItemMeta().getDisplayName()).toLowerCase() + ".yml").exists()) {
                                 new ShopOptionsMenu("info.shop-options-title", ((Player) event.getWhoClicked()), ChatColor.stripColor(button.getItemMeta().getDisplayName())).openMenu();
                             }
                         } else {
@@ -66,8 +66,8 @@ public class ButtonFunctions implements Listener {
                         }
                     } else if (button.getItemMeta().getDisplayName() == null) return;
                     else if (button.getType().equals(plugin.getHandler().getItemManager().getSign())) {
-                        if (plugin.getFile("shops", lojaString).exists()) {
-                            Configuration config = plugin.getConfig("shops", lojaString);
+                        if (plugin.getFile("shops", lojaString.toLowerCase()).exists()) {
+                            Configuration config = plugin.getConfig("shops", lojaString.toLowerCase());
                             config.set("shop.public-visits", !config.getBoolean("shop.public-visits"));
                             config.save(false);
                             ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), plugin.getHandler().getSoundManager().getClick(), 0.5f, 1f);
@@ -83,14 +83,14 @@ public class ButtonFunctions implements Listener {
                             event.getWhoClicked().sendMessage(plugin.getLangFile().get("error.create-shop-first"));
                         }
                     } else if (ChatColor.stripColor(button.getItemMeta().getDisplayName()).contains(ChatColor.stripColor(plugin.getLangFile().get("info.close-name")))) {
-                        if (plugin.getFile("shops", lojaString).exists()) {
+                        if (plugin.getFile("shops", lojaString.toLowerCase()).exists()) {
                             BkShop.closeShop(((Player) event.getWhoClicked()), lojaString.toLowerCase());
                         } else {
                             event.getWhoClicked().closeInventory();
                             event.getWhoClicked().sendMessage(plugin.getLangFile().get("error.create-shop-first"));
                         }
                     } else if (ChatColor.stripColor(button.getItemMeta().getDisplayName()).contains(ChatColor.stripColor(plugin.getLangFile().get("info.open-name")))) {
-                        if (plugin.getFile("shops", lojaString).exists()) {
+                        if (plugin.getFile("shops", lojaString.toLowerCase()).exists()) {
                             BkShop.openShop(((Player) event.getWhoClicked()), lojaString.toLowerCase());
                         } else {
                             event.getWhoClicked().closeInventory();
