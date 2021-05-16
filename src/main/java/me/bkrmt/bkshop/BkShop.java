@@ -41,8 +41,7 @@ public final class BkShop extends BkPlugin {
         getCommandMapper().addCommand(new CommandModule(new HelpCmd(plugin, "bkshop", ""), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new ShopsCmd(plugin, "shops", "bkshop.shops"), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new DelShopCmd(plugin, "delshop", "bkshop.delshop"), (a, b, c, d) -> Collections.singletonList("")))
-                .addCommand(new CommandModule(new ShopCmd(plugin, "shop", "bkshop.shop"), (sender, b, c, args) ->
-                {
+                .addCommand(new CommandModule(new ShopCmd(plugin, "shop", "bkshop.shop"), (sender, b, c, args) -> {
                     List<String> completions = new ArrayList<>();
                     if (sender.hasPermission("bkshop.shop")) {
                         if (args.length == 1) {
@@ -55,8 +54,7 @@ public final class BkShop extends BkPlugin {
 
                     return completions;
                 }))
-                .addCommand(new CommandModule(new SetShop(plugin, "setshop", "bkshop.setshop"), (sender, b, c, args) ->
-                {
+                .addCommand(new CommandModule(new SetShop(plugin, "setshop", "bkshop.setshop"), (sender, b, c, args) -> {
                     List<String> completions = new ArrayList<>();
                     if (sender.hasPermission("bkshop.setshop")) {
                         String shop = plugin.getLangFile().get("commands.setshop.subcommands.shop");
