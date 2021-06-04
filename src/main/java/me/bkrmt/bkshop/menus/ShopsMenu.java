@@ -95,23 +95,23 @@ public class ShopsMenu {
         return temp;
     }
 
-    private void setMenuItems(int pagina) {
+    private void setMenuItems(int page) {
         if (!isEmpty()) {
-            int arrayIndex = pagina * 25;
+            int arrayIndex = page * 25;
             ItemStack buttonVoltar = Utils.createItem(plugin, plugin.getLangFile().get("info.return-name"), null, plugin.getLangFile().get("info.return-desc"));
 
             ItemStack buttonProximo = Utils.createItem(plugin, plugin.getLangFile().get("info.next-name"), null, plugin.getLangFile().get("info.next-desc"));
 
-            menuLoja[pagina].setItem(18, buttonVoltar);
+            menuLoja[page].setItem(18, buttonVoltar);
 
-            if (pagina != paginas - 1) menuLoja[pagina].setItem(26, buttonProximo);
+            if (page != paginas - 1) menuLoja[page].setItem(26, buttonProximo);
 
             for (int c = 0; c < 45; c++) {
                 if (c == 0 || c == 8 || c == 36 || c == 44) {
-                    menuLoja[pagina].setItem(c, BkShop.getFrameItems()[0]);
+                    menuLoja[page].setItem(c, BkShop.getFrameItems()[0]);
                 }
                 if (c == 1 || c == 7 || c == 9 || c == 17 || c == 37 || c == 43 || c == 27 || c == 35) {
-                    menuLoja[pagina].setItem(c, BkShop.getFrameItems()[1]);
+                    menuLoja[page].setItem(c, BkShop.getFrameItems()[1]);
                 }
             }
 
@@ -142,7 +142,7 @@ public class ShopsMenu {
                                 ('&', "&" + customColor + configFile.getString("shop.message")));
                     menuItem = Utils.createItem(plugin, Utils.translateColor("&" + customColor + "&l" + lojasCriadas[arrayIndex]),
                             plugin.getHandler().getItemManager().getHead().getType(), headLore);
-                    menuLoja[pagina].setItem(i, menuItem);
+                    menuLoja[page].setItem(i, menuItem);
                     arrayIndex++;
                     if (arrayIndex == lojasCriadas.length) return;
                 }
