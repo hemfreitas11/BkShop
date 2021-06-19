@@ -83,10 +83,9 @@ public final class BkShop extends BkPlugin {
         shopsMenu = new ShopsMenu();
         mainMenu = new MainMenu();
         try {
-            TeleportCore.playersInCooldown.get("Core-Started");
-        } catch (NullPointerException ignored) {
-            new TeleportCore(this);
-            TeleportCore.playersInCooldown.put("Core-Started", true);
+            TeleportCore.INSTANCE.getPlayersInCooldown().get("Core-Started");
+        } catch (Exception ignored) {
+            TeleportCore.INSTANCE.start(this);
         }
     }
 
