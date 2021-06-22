@@ -63,7 +63,7 @@ public class ShopOptionsMenu extends ShopMenu {
 
     private void setButtons() {
         String customColor = "7";
-        Configuration configFile = plugin.getConfig("shops", shopOwner.toLowerCase() + ".yml");
+        Configuration configFile = plugin.getConfigManager().getConfig("shops", shopOwner.toLowerCase() + ".yml");
         if (configFile.getString("shop.color") != null) customColor = configFile.getString("shop.color");
 
         ItemStack goToShop = Utils.createItem(plugin, Utils.translateColor("&" + customColor + "&l" + configFile.getString("shop.player")),

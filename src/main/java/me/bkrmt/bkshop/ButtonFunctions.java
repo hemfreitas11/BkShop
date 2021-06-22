@@ -67,9 +67,8 @@ public class ButtonFunctions implements Listener {
                     } else if (button.getItemMeta().getDisplayName() == null) return;
                     else if (button.getType().equals(plugin.getHandler().getItemManager().getSign())) {
                         if (plugin.getFile("shops", lojaString.toLowerCase()).exists()) {
-                            Configuration config = plugin.getConfig("shops", lojaString.toLowerCase());
+                            Configuration config = plugin.getConfigManager().getConfig("shops", lojaString.toLowerCase());
                             config.set("shop.public-visits", !config.getBoolean("shop.public-visits"));
-                            config.save(false);
                             ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), plugin.getHandler().getSoundManager().getClick(), 0.5f, 1f);
                             if (!config.getBoolean("shop.public-visits")) {
                                 event.getWhoClicked().sendMessage(plugin.getLangFile().get("info.info-visit-public-message"));

@@ -121,7 +121,7 @@ public class ShopsMenu {
                 for (int i = start; i <= end; i++) {
                     if (i == start || i == start + 1 || i == end - 1 || i == end) continue;
                     String customColor = "7";
-                    Configuration configFile = plugin.getConfig("shops", lojasCriadas[arrayIndex].toLowerCase() + ".yml");
+                    Configuration configFile = plugin.getConfigManager().getConfig("shops", lojasCriadas[arrayIndex].toLowerCase() + ".yml");
                     if (configFile.getString("shop.color") != null) customColor = configFile.getString("shop.color");
 
                     ItemStack menuItem;

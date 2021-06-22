@@ -28,6 +28,12 @@ commands:
     description: 'Shows the help of the plugin.'
     usage: '/bkshop'
 
+  #Reload Command
+  bkshopreload:
+    command: 'bkshopreload'
+    description: 'Updates all the configs and messages of the plugin.'
+    usage: '/bkshopreload'
+
   #Shop Command
   shop:
     command: 'shop'
@@ -61,6 +67,7 @@ commands:
 # Here you can change all the messages in the plugin
 # *-----------------*=/[Info Messages]\=*---------------*
 info:
+  configs-reloaded: '&aAll the configs and messages have been reloaded!'
   message-set: '&aMessage set to {message}&a.'
   color-set: '&aColor changed to &{color}{color}&a.'
   shop-set: '&aShop set.'

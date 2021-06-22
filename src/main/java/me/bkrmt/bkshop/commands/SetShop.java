@@ -3,6 +3,7 @@ package me.bkrmt.bkshop.commands;
 import me.bkrmt.bkcore.BkPlugin;
 import me.bkrmt.bkcore.Utils;
 import me.bkrmt.bkcore.command.Executor;
+import me.bkrmt.bkcore.config.ConfigType;
 import me.bkrmt.bkcore.config.Configuration;
 import me.bkrmt.bkshop.BkShop;
 import me.bkrmt.bkshop.events.PlayerSetShopEvent;
@@ -11,6 +12,8 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.io.File;
 
 public class SetShop extends Executor {
     public SetShop(BkPlugin plugin, String langKey, String permission) {
@@ -37,9 +40,8 @@ public class SetShop extends Executor {
                     if (args[0].equals(getPlugin().getLangFile().get("commands." + getLangKey() + ".subcommands.color"))) {
                         if (args.length == 2) {
                             if (Utils.isValidColor(args[1])) {
-                                Configuration config = getPlugin().getConfig("shops", fileName.toLowerCase());
+                                Configuration config = getPlugin().getConfigManager().getConfig("shops", fileName.toLowerCase());
                                 config.set("shop.color", args[1]);
-                                config.save(false);
                                 BkShop.getShopsMenu().reloadMenu();
                                 sender.sendMessage(Utils.translateColor(getPlugin().getLangFile().get("info.color-set", false).replace("{color}", args[1])));
                             } else {
@@ -57,7 +59,7 @@ public class SetShop extends Executor {
                         }
                         String mensagem = builder.toString();
 
-                        if (mensagem.length() > getPlugin().getConfig().getInt("max-message-length"))
+                        if (mensagem.length() > getPlugin().getConfigManager().getConfig().getInt("max-message-length"))
                             sender.sendMessage(getPlugin().getLangFile().get("error.large-message"));
                         else {
                             char[] messageChar = mensagem.toCharArray();
@@ -71,9 +73,8 @@ public class SetShop extends Executor {
                             }
                             if (invalid) sender.sendMessage(getPlugin().getLangFile().get("error.invalid-message"));
                             else {
-                                Configuration config = getPlugin().getConfig("shops", fileName.toLowerCase());
+                                Configuration config = getPlugin().getConfigManager().getConfig("shops", fileName.toLowerCase());
                                 config.set("shop.message", mensagem);
-                                config.save(false);
                                 sender.sendMessage(Utils.translateColor(getPlugin().getLangFile().get("info.message-set", false).replace("{message}", mensagem)));
                                 BkShop.getShopsMenu().reloadMenu();
                             }
@@ -102,7 +103,15 @@ public class SetShop extends Executor {
     private void setLojaValues(CommandSender sender) {
         Player player = (Player) sender;
         Location location = player.getLocation();
-        Configuration config = getPlugin().getConfig("shops", player.getName().toLowerCase() + ".yml");
+
+        File shopFile = getPlugin().getFile("shops", player.getName().toLowerCase() + ".yml");
+        if (shopFile.exists()) {
+            getPlugin().getConfigManager().removeConfig("shops", player.getName().toLowerCase() + ".yml");
+            shopFile.delete();
+        }
+
+        Configuration config = new Configuration(getPlugin(), shopFile, ConfigType.Player_Data);
+
         config.set("shop.player", player.getName());
         config.setLocation("shop", location);
         config.set("shop.visits", 0);
@@ -110,7 +119,8 @@ public class SetShop extends Executor {
         config.set("shop.public-visits", false);
         config.set("shop.open", true);
         config.set("config-file-version", 1);
-        config.save(false);
+        config.saveToFile();
+        getPlugin().getConfigManager().addConfig(config);
     }
 
 }

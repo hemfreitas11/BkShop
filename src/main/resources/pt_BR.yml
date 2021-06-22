@@ -28,6 +28,12 @@ commands:
     description: 'Mostra a ajuda do plugin.'
     usage: '/bkshop'
 
+  #Comando Atualizar
+  bkshopreload:
+    command: 'bkshopatualizar'
+    description: 'Atualiza as configuracoes e mensagens do plugin.'
+    usage: '/bkshopatualizar'
+
   #Comando Loja
   shop:
     command: 'loja'
@@ -61,6 +67,7 @@ commands:
 # Aqui você pode mudar todas as mensagens do plugin
 # *---------------*=/[Mensagens Gerais]\=*--------------*
 info:
+  configs-reloaded: '&aTodas as configuracoes e mensagens foram recarregadas!'
   message-set: '&aMensagem alterada para "{message}&a".'
   color-set: '&aCor alterada para "&{color}{color}&a".'
   shop-set: '&aLoja definida com sucesso.'

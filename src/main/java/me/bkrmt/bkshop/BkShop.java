@@ -3,6 +3,7 @@ package me.bkrmt.bkshop;
 import me.bkrmt.bkcore.BkPlugin;
 import me.bkrmt.bkcore.command.CommandModule;
 import me.bkrmt.bkcore.command.HelpCmd;
+import me.bkrmt.bkcore.command.ReloadCmd;
 import me.bkrmt.bkcore.config.Configuration;
 import me.bkrmt.bkshop.commands.DelShopCmd;
 import me.bkrmt.bkshop.commands.SetShop;
@@ -38,7 +39,9 @@ public final class BkShop extends BkPlugin {
         plugin = this;
         start(true);
         setRunning(true);
-        getCommandMapper().addCommand(new CommandModule(new HelpCmd(plugin, "bkshop", ""), (a, b, c, d) -> Collections.singletonList("")))
+        getCommandMapper()
+                .addCommand(new CommandModule(new HelpCmd(plugin, "bkshop", ""), (a, b, c, d) -> Collections.singletonList("")))
+                .addCommand(new CommandModule(new ReloadCmd(plugin, "bkshopreload", ""), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new ShopsCmd(plugin, "shops", "bkshop.shops"), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new DelShopCmd(plugin, "delshop", "bkshop.delshop"), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new ShopCmd(plugin, "shop", "bkshop.shop"), (sender, b, c, args) -> {
@@ -79,24 +82,26 @@ public final class BkShop extends BkPlugin {
                 }))
                 .registerAll();
         getServer().getPluginManager().registerEvents(new ButtonFunctions(), this);
-        frameType = getConfig().getInt("frame");
+        frameType = getConfigManager().getConfig().getInt("frame");
         shopsMenu = new ShopsMenu();
         mainMenu = new MainMenu();
-        try {
-            TeleportCore.INSTANCE.getPlayersInCooldown().get("Core-Started");
-        } catch (Exception ignored) {
+
+        if (TeleportCore.INSTANCE.getPlayersInCooldown().get("Core-Started") == null)
             TeleportCore.INSTANCE.start(this);
-        }
+    }
+
+    @Override
+    public void onDisable() {
+        getConfigManager().saveConfigs();
     }
 
     public void updateShop() {
         new BukkitRunnable() {
-
             @Override
             public void run() {
                 getShopsMenu().reloadMenu(false);
             }
-        }.runTaskTimerAsynchronously(this, 0, getConfig().getInt("shop-update-delay") * 20);
+        }.runTaskTimerAsynchronously(this, 0, getConfigManager().getConfig().getInt("shop-update-delay") * 20);
     }
 
     public static void loadMenuLojas() {
@@ -146,16 +151,14 @@ public final class BkShop extends BkPlugin {
     public static void closeShop(Player player, String shopOwner) {
         player.closeInventory();
         player.sendMessage(plugin.getLangFile().get("info.shop-closed"));
-        Configuration config = plugin.getConfig("shops", shopOwner.toLowerCase());
+        Configuration config = plugin.getConfigManager().getConfig("shops", shopOwner.toLowerCase());
         config.set("shop.open", false);
-        config.save(false);
         BkShop.getShopsMenu().reloadMenu();
     }
 
     public static void openShop(Player player, String shopOwner) {
-        Configuration config = plugin.getConfig("shops", shopOwner.toLowerCase());
+        Configuration config = plugin.getConfigManager().getConfig("shops", shopOwner.toLowerCase());
         config.set("shop.open", true);
-        config.save(false);
         player.closeInventory();
         player.sendMessage(plugin.getLangFile().get("info.shop-open"));
         BkShop.getShopsMenu().reloadMenu();
@@ -172,7 +175,7 @@ public final class BkShop extends BkPlugin {
             File[] lojasLista = lojasFolder.listFiles();
             lojas = new String[filesLenght];
             for (int c = 0; c < filesLenght; c++) {
-                lojas[c] = plugin.getConfig("shops", lojasLista[c].getName().toLowerCase()).getString("shop.player");
+                lojas[c] = plugin.getConfigManager().getConfig("shops", lojasLista[c].getName().toLowerCase()).getString("shop.player");
             }
         }
         return lojas;

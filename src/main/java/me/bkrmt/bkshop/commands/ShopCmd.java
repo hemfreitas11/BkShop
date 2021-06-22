@@ -43,11 +43,10 @@ public class ShopCmd extends Executor {
     }
 
     public static void goToShop(BkPlugin plugin, CommandSender sender, String shopOwner) {
-        Configuration config = plugin.getConfig("shops", shopOwner.toLowerCase() + ".yml");
+        Configuration config = plugin.getConfigManager().getConfig("shops", shopOwner.toLowerCase() + ".yml");
         if (config.getBoolean("shop.open") || sender.hasPermission("bkshop.admin")) {
             config.set("shop.visits", config.getInt("shop.visits") + 1);
             config.set("shop.last-visitor", sender.getName());
-            config.save(false);
             if (config.getBoolean("shop.public-visits")) BkShop.getShopsMenu().reloadMenu();
             new Teleport(plugin, sender, shopOwner.toLowerCase(), TeleportType.Loja);
         } else sender.sendMessage(plugin.getLangFile().get("error.closed-shop"));

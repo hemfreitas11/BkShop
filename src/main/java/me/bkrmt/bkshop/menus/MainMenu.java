@@ -69,9 +69,8 @@ public class MainMenu extends ShopMenu {
 
         ArrayList<String> visitLore = new ArrayList<>();
         ArrayList<String> infoLore = new ArrayList<>();
-        Configuration lojaFile;
         if (loja.exists()) {
-            lojaFile = plugin.getConfig("shops", lojaString.toLowerCase());
+            Configuration lojaFile = plugin.getConfigManager().getConfig("shops", lojaString.toLowerCase());
             infoLore.add(plugin.getLangFile().get("info.info-status").replace("{status}",
                     lojaFile.getBoolean("shop.open") ? plugin.getLangFile().get("info.info-open") : plugin.getLangFile().get("info.info-closed")));
 
@@ -98,7 +97,7 @@ public class MainMenu extends ShopMenu {
 
         String visitColor = "a";
         if (loja.exists()) {
-            lojaFile = plugin.getConfig("shops", lojaString.toLowerCase());
+            Configuration lojaFile = plugin.getConfigManager().getConfig("shops", lojaString.toLowerCase());
             if (lojaFile.getBoolean("shop.public-visits")) visitColor = "e";
         }
         getMenu().setItem(40, Utils.createItem(plugin, Utils.translateColor(plugin.getLangFile().get("info.visits-name", false).replace("{color}", visitColor)), plugin.getHandler().getItemManager().getSign(), visitLore));

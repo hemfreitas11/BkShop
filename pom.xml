@@ -60,7 +60,7 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
 <!--                            <outputFile>D:/Servidores/svteste/${build.finalName}.jar</outputFile>-->
-                            <outputFile>D:/Servidores/svteste/plugins/${build.finalName}.jar</outputFile>
+                            <outputFile>D:/Servidores/encomenda-server/plugins/${build.finalName}.jar</outputFile>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
