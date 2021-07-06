@@ -63,6 +63,57 @@ commands:
     usage: '/delshop'
 # *-----------------------*=[|]=*-----------------------*
 
+gui-buttons:
+  next-page:
+    name: '{shine green bold}Next Page'
+    description:
+      - '&7Go to the page &a{page-number}'
+  previous-page:
+    name: '{shine red bold}Previous Page'
+    description:
+      - '&7Return to the page &c{page-number}'
+  return:
+    name: '{shine red bold}Return'
+    description:
+      - '&7Return to the previous page.'
+  shops:
+    name: '{shine green bold}Shops'
+    description:
+      - '&aPlayers shop list'
+  visits:
+    name: '{shine gold bold}Configure Visit Info'
+  close:
+    name: '{shine lightred bold}Close shop'
+    description:
+      - '&cTemporarily close your shop without deleting it'
+  open:
+    name: '{shine lightgreen bold}Open shop'
+    description:
+      - '&aRe-opens your shop'
+  admin-teleport:
+    name: '{shine lightblue}Teleport to this shop'
+  info:
+    name: '{shine darkgray bold}Info'
+  admin-close:
+    name: '{shine lightred}Close this shop'
+  admin-open:
+    name: '{shine lightgreen}Open this shop'
+  admin-delete:
+    name: '{shine red bold}Delete this shop'
+  delete-sign:
+    name: '{shine red bold}Delete Shop'
+  delete-confirm:
+    name: '{shine green bold}Click here to confirm'
+  delete-decline:
+    name: '{shine red bold}Click here to decline'
+
+#  admin-go-to-shop: '&oTeleport to this shop'
+#  admin-close-shop: '&c&lClose this shop'
+#  admin-open-shop: '&a&lOpen this shop'
+#  admin-delete-shop: '&4&lDelete this shop'
+#  delete-sign: '&4&lDelete Shop'
+#  delete-confirm: '&2&lClick here to confirm'
+#  delete-decline: '&4&lClick here to decline'
 
 # Here you can change all the messages in the plugin
 # *-----------------*=/[Info Messages]\=*---------------*
@@ -72,6 +123,8 @@ info:
   color-set: '&aColor changed to &{color}{color}&a.'
   shop-set: '&aShop set.'
   shop-deleted: '&aShop removed.'
+  shop-head-name: '&{shop-color}{player}'
+  shop-head-command: '&7&o/{command} &{shop-color}&o{player}'
   time-remaining: '&7Teleporting in &a{seconds}'
   list-title: '     &8&lShops List Page {current-page}/{total-pages}'
   main-menu-title: '                 &8&lShop'
@@ -95,27 +148,9 @@ info:
     title: '{player}''s shop'
   shop-closed: '&eShop closed.'
   shop-open: '&aShop open.'
-  return-name: '&c&lReturn'
-  return-desc: '&4Return to the previous page.'
-  next-name: '&2&lNext'
-  next-desc: '&aGo to the next page.'
-  shops-name: '&2&lShops'
-  visits-name: '&{color}&lConfigure Visit Info'
   shops-desc: '&aPlayers shop list'
-  info-name: '&8&lInfo'
-  close-name: '&c&lClose shop'
-  close-desc: '&cTemporarily close your shop without deleting it'
-  open-name: '&a&lOpen shop'
-  open-desc: '&aRe-opens your shop'
-  admin-go-to-shop: '&oTeleport to this shop'
-  admin-close-shop: '&c&lClose this shop'
-  admin-open-shop: '&a&lOpen this shop'
-  admin-delete-shop: '&4&lDelete this shop'
   delete-confirm-title: '&4&lConfirm delete?'
-  delete-sign: '&4&lDelete Shop'
   delete-sign-lore: '&4&oAre you sure you want to delete this shop?'
-  delete-confirm: '&2&lClick here to confirm'
-  delete-decline: '&4&lClick here to decline'
 # *-----------------------*=[|]=*-----------------------*
 
 

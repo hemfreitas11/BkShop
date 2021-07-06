@@ -4,44 +4,54 @@ import me.bkrmt.bkcore.BkPlugin;
 import me.bkrmt.bkcore.command.CommandModule;
 import me.bkrmt.bkcore.command.HelpCmd;
 import me.bkrmt.bkcore.command.ReloadCmd;
-import me.bkrmt.bkcore.config.Configuration;
+import me.bkrmt.bkcore.textanimator.AnimatorManager;
 import me.bkrmt.bkshop.commands.DelShopCmd;
 import me.bkrmt.bkshop.commands.SetShop;
 import me.bkrmt.bkshop.commands.ShopCmd;
 import me.bkrmt.bkshop.commands.ShopsCmd;
-import me.bkrmt.bkshop.menus.MainMenu;
-import me.bkrmt.bkshop.menus.ShopsMenu;
+import me.bkrmt.bkshop.menus.MenuManager;
+import me.bkrmt.opengui.OpenGUI;
 import me.bkrmt.teleport.TeleportCore;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.StringUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public final class BkShop extends BkPlugin {
-    public static BkPlugin plugin;
-    public static BukkitTask reloadDelay;
-    public static int frameType;
-    private static ShopsMenu shopsMenu;
-    private static MainMenu mainMenu;
+    public static BkShop plugin;
+    private int frameType;
+    private AnimatorManager animatorManager;
+    private MenuManager menuManager;
+    private ShopsManager shopsManager;
 
     @Override
     public void onEnable() {
         plugin = this;
+        OpenGUI.INSTANCE.register(this);
+        animatorManager = new AnimatorManager(this);
         start(true);
         setRunning(true);
+
+        sendConsoleMessage("§b__________ __     §1________.__");
+        sendConsoleMessage("§b\\______   |  | __§1/   _____|  |__   ____ ______");
+        sendConsoleMessage("§b |    |  _|  |/ /§1\\_____  \\|  |  \\ /  _ \\____  \\");
+        sendConsoleMessage("§b |    |   |    < §1/        |   |  (  |_| |  |_| |");
+        sendConsoleMessage("§b |______  |__|_ §1/_______  |___|  /\\____/|   __/");
+        sendConsoleMessage("§b        \\/     §b\\/       §1\\/     \\/       |__|");
+        sendConsoleMessage("");
+        sendConsoleMessage("      §b© BkPlugins | discord.io/bkplugins");
+        sendConsoleMessage("");
+        sendConsoleMessage(InternalMessages.PLUGIN_STARTING.getMessage(this));
+
         getCommandMapper()
                 .addCommand(new CommandModule(new HelpCmd(plugin, "bkshop", ""), (a, b, c, d) -> Collections.singletonList("")))
-                .addCommand(new CommandModule(new ReloadCmd(plugin, "bkshopreload", ""), (a, b, c, d) -> Collections.singletonList("")))
+                .addCommand(new CommandModule(new ReloadCmd(plugin, "bkshopreload", "bkshop.reload"), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new ShopsCmd(plugin, "shops", "bkshop.shops"), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new DelShopCmd(plugin, "delshop", "bkshop.delshop"), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new ShopCmd(plugin, "shop", "bkshop.shop"), (sender, b, c, args) -> {
@@ -49,7 +59,8 @@ public final class BkShop extends BkPlugin {
                     if (sender.hasPermission("bkshop.shop")) {
                         if (args.length == 1) {
                             String partialCommand = args[0];
-                            List<String> lojas = Arrays.asList(getLojas());
+                            List<String> lojas = new ArrayList<>();
+                            getShopsManager().getShops().forEach(shop -> lojas.add(shop.getOwnerName()));
                             StringUtil.copyPartialMatches(partialCommand, lojas, completions);
                         }
                     }
@@ -60,9 +71,9 @@ public final class BkShop extends BkPlugin {
                 .addCommand(new CommandModule(new SetShop(plugin, "setshop", "bkshop.setshop"), (sender, b, c, args) -> {
                     List<String> completions = new ArrayList<>();
                     if (sender.hasPermission("bkshop.setshop")) {
-                        String shop = plugin.getLangFile().get("commands.setshop.subcommands.shop");
-                        String color = plugin.getLangFile().get("commands.setshop.subcommands.color");
-                        String message = plugin.getLangFile().get("commands.setshop.subcommands.message");
+                        String shop = plugin.getLangFile().get(null, "commands.setshop.subcommands.shop");
+                        String color = plugin.getLangFile().get(null, "commands.setshop.subcommands.color");
+                        String message = plugin.getLangFile().get(null, "commands.setshop.subcommands.message");
                         List<String> subCommands = new ArrayList<>(Arrays.asList(shop, color, message));
 
                         if (args.length == 1) {
@@ -81,40 +92,26 @@ public final class BkShop extends BkPlugin {
                     return completions;
                 }))
                 .registerAll();
-        getServer().getPluginManager().registerEvents(new ButtonFunctions(), this);
+
         frameType = getConfigManager().getConfig().getInt("frame");
-        shopsMenu = new ShopsMenu();
-        mainMenu = new MainMenu();
+        sendConsoleMessage(InternalMessages.LOADING_SHOPS.getMessage(this));
+        shopsManager = new ShopsManager();
+        menuManager = new MenuManager();
 
         if (TeleportCore.INSTANCE.getPlayersInCooldown().get("Core-Started") == null)
             TeleportCore.INSTANCE.start(this);
+
+        sendConsoleMessage(InternalMessages.PLUGIN_STARTED.getMessage(this));
     }
 
     @Override
-    public void onDisable() {
-        getConfigManager().saveConfigs();
+    public AnimatorManager getAnimatorManager() {
+        return animatorManager;
     }
 
-    public void updateShop() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                getShopsMenu().reloadMenu(false);
-            }
-        }.runTaskTimerAsynchronously(this, 0, getConfigManager().getConfig().getInt("shop-update-delay") * 20);
-    }
-
-    public static void loadMenuLojas() {
-        shopsMenu = new ShopsMenu();
-    }
-
-    public static void loadMainMenu() {
-        mainMenu = new MainMenu();
-    }
-
-    public static ItemStack[] getFrameItems() {
+    public ItemStack[] getFrameItems() {
         ItemStack[] items = new ItemStack[3];
-        switch (BkShop.frameType) {
+        switch (getFrameType()) {
             case 0:
                 items[0] = new ItemStack(Material.AIR);
                 items[1] = new ItemStack(Material.AIR);
@@ -130,14 +127,14 @@ public final class BkShop extends BkPlugin {
                 break;
             case 3:
                 items[0] = new ItemStack(Material.IRON_INGOT);
-                items[1] = new ItemStack(plugin.getHandler().getItemManager().getIronBars());
+                items[1] = new ItemStack(BkShop.getInstance().getHandler().getItemManager().getIronBars());
                 break;
             case 4:
                 items[0] = new ItemStack(Material.GOLD_INGOT);
-                items[1] = new ItemStack(plugin.getHandler().getItemManager().getRails());
+                items[1] = new ItemStack(BkShop.getInstance().getHandler().getItemManager().getRails());
                 break;
         }
-        items[2] = new ItemStack(plugin.getHandler().getItemManager().getWhitePane());
+        items[2] = new ItemStack(BkShop.getInstance().getHandler().getItemManager().getWhitePane());
         ItemMeta meta = items[0].getItemMeta();
         meta.setDisplayName(" ");
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -145,48 +142,28 @@ public final class BkShop extends BkPlugin {
         items[1].setItemMeta(meta);
         items[2].setItemMeta(meta);
         return items;
-
     }
 
-    public static void closeShop(Player player, String shopOwner) {
-        player.closeInventory();
-        player.sendMessage(plugin.getLangFile().get("info.shop-closed"));
-        Configuration config = plugin.getConfigManager().getConfig("shops", shopOwner.toLowerCase());
-        config.set("shop.open", false);
-        BkShop.getShopsMenu().reloadMenu();
+    public ShopsManager getShopsManager() {
+        return shopsManager;
     }
 
-    public static void openShop(Player player, String shopOwner) {
-        Configuration config = plugin.getConfigManager().getConfig("shops", shopOwner.toLowerCase());
-        config.set("shop.open", true);
-        player.closeInventory();
-        player.sendMessage(plugin.getLangFile().get("info.shop-open"));
-        BkShop.getShopsMenu().reloadMenu();
+    public MenuManager getMenuManager() {
+        return menuManager;
     }
 
-    public static String[] getLojas() {
-        File lojasFolder = new File(plugin.getDataFolder().getPath() + File.separator + "shops");
-        if (!lojasFolder.exists()) lojasFolder.mkdir();
-        int filesLenght = lojasFolder.listFiles().length;
-        String[] lojas;
-        if (filesLenght == 0) {
-            lojas = new String[]{"-"};
-        } else {
-            File[] lojasLista = lojasFolder.listFiles();
-            lojas = new String[filesLenght];
-            for (int c = 0; c < filesLenght; c++) {
-                lojas[c] = plugin.getConfigManager().getConfig("shops", lojasLista[c].getName().toLowerCase()).getString("shop.player");
-            }
-        }
-        return lojas;
+    public int getFrameType() {
+        return frameType;
     }
 
-    public static ShopsMenu getShopsMenu() {
-        return shopsMenu;
+    @Override
+    public void onDisable() {
+        getShopsManager().saveShops();
+        getConfigManager().saveConfigs();
     }
 
-    public static MainMenu getMainMenu() {
-        return mainMenu;
+    public static BkShop getInstance() {
+        return plugin;
     }
 
 }

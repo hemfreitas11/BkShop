@@ -3,17 +3,12 @@ package me.bkrmt.bkshop.commands;
 import me.bkrmt.bkcore.BkPlugin;
 import me.bkrmt.bkcore.Utils;
 import me.bkrmt.bkcore.command.Executor;
-import me.bkrmt.bkcore.config.ConfigType;
-import me.bkrmt.bkcore.config.Configuration;
 import me.bkrmt.bkshop.BkShop;
-import me.bkrmt.bkshop.events.PlayerSetShopEvent;
+import me.bkrmt.bkshop.Shop;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.io.File;
 
 public class SetShop extends Executor {
     public SetShop(BkPlugin plugin, String langKey, String permission) {
@@ -23,46 +18,45 @@ public class SetShop extends Executor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!hasPermission(sender)) {
-            sender.sendMessage(getPlugin().getLangFile().get("error.no-permission"));
+            sender.sendMessage(getPlugin().getLangFile().get(((Player) sender), "error.no-permission"));
         } else {
             if (args.length == 0) {
                 sendUsage(sender);
             } else if (args.length == 1) {
-                if (args[0].equals("shop") || args[0].equals("loja")) setarLoja(sender);
-                else if (args[0].equals(getPlugin().getLangFile().get("commands." + getLangKey() + ".subcommands.color")))
-                    sender.sendMessage(getPlugin().getLangFile().get("error.no-color"));
+                if (args[0].equalsIgnoreCase(getPlugin().getLangFile().get(((Player) sender), "commands." + getLangKey() + ".subcommands.shop"))) BkShop.getInstance().getShopsManager().setShop(sender);
+                else if (args[0].equals(getPlugin().getLangFile().get(((Player) sender), "commands." + getLangKey() + ".subcommands.color")))
+                    sender.sendMessage(getPlugin().getLangFile().get(((Player) sender), "error.no-color"));
                 else sendUsage(sender);
             } else {
-                String fileName = sender.getName().toLowerCase() + ".yml";
-                if (!getPlugin().getFile("shops", fileName.toLowerCase()).exists()) {
-                    sender.sendMessage(getPlugin().getLangFile().get("error.create-shop-first"));
+                Player player = (Player) sender;
+                Shop shop = BkShop.getInstance().getShopsManager().getShop(player.getUniqueId());
+                if (shop == null) {
+                    sender.sendMessage(getPlugin().getLangFile().get(((Player) sender), "error.create-shop-first"));
                 } else {
-                    if (args[0].equals(getPlugin().getLangFile().get("commands." + getLangKey() + ".subcommands.color"))) {
+                    if (args[0].equals(getPlugin().getLangFile().get(((Player) sender), "commands." + getLangKey() + ".subcommands.color"))) {
                         if (args.length == 2) {
                             if (Utils.isValidColor(args[1])) {
-                                Configuration config = getPlugin().getConfigManager().getConfig("shops", fileName.toLowerCase());
-                                config.set("shop.color", args[1]);
-                                BkShop.getShopsMenu().reloadMenu();
-                                sender.sendMessage(Utils.translateColor(getPlugin().getLangFile().get("info.color-set", false).replace("{color}", args[1])));
+                                shop.setColor(args[1]);
+                                sender.sendMessage(Utils.translateColor(getPlugin().getLangFile().get(((Player) sender), "info.color-set", false).replace("{color}", args[1])));
                             } else {
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('§',
-                                        getPlugin().getLangFile().get("error.invalid-color.line1").replaceAll("&", "§").replace("{color}", args[1])));
+                                        getPlugin().getLangFile().get(((Player) sender), "error.invalid-color.line1").replaceAll("&", "§").replace("{color}", args[1])));
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('§',
-                                        getPlugin().getLangFile().get("error.invalid-color.line2").replaceAll("&", "§").replace("{color-simbol}", "&")));
+                                        getPlugin().getLangFile().get(((Player) sender), "error.invalid-color.line2").replaceAll("&", "§").replace("{color-simbol}", "&")));
                             }
                         }
-                    } else if (args[0].equals(getPlugin().getLangFile().get("commands." + getLangKey() + ".subcommands.message"))) {
+                    } else if (args[0].equals(getPlugin().getLangFile().get(((Player) sender), "commands." + getLangKey() + ".subcommands.message"))) {
                         StringBuilder builder = new StringBuilder();
                         for (int c = 1; c < args.length; c++) {
                             builder.append(args[c]);
                             if (c < args.length - 1) builder.append(" ");
                         }
-                        String mensagem = builder.toString();
+                        String description = builder.toString();
 
-                        if (mensagem.length() > getPlugin().getConfigManager().getConfig().getInt("max-message-length"))
-                            sender.sendMessage(getPlugin().getLangFile().get("error.large-message"));
+                        if (description.length() > getPlugin().getConfigManager().getConfig().getInt("max-message-length"))
+                            sender.sendMessage(getPlugin().getLangFile().get(((Player) sender), "error.large-message"));
                         else {
-                            char[] messageChar = mensagem.toCharArray();
+                            char[] messageChar = description.toCharArray();
                             boolean invalid = false;
                             for (char c : messageChar) {
                                 if (!(Character.isAlphabetic(c)) && !(Character.isDigit(c))) {
@@ -71,12 +65,10 @@ public class SetShop extends Executor {
                                     break;
                                 }
                             }
-                            if (invalid) sender.sendMessage(getPlugin().getLangFile().get("error.invalid-message"));
+                            if (invalid) sender.sendMessage(getPlugin().getLangFile().get(((Player) sender), "error.invalid-message"));
                             else {
-                                Configuration config = getPlugin().getConfigManager().getConfig("shops", fileName.toLowerCase());
-                                config.set("shop.message", mensagem);
-                                sender.sendMessage(Utils.translateColor(getPlugin().getLangFile().get("info.message-set", false).replace("{message}", mensagem)));
-                                BkShop.getShopsMenu().reloadMenu();
+                                shop.setDescription(description);
+                                sender.sendMessage(Utils.translateColor(getPlugin().getLangFile().get(((Player) sender), "info.message-set", false).replace("{message}", description)));
                             }
                         }
                     } else {
@@ -87,40 +79,6 @@ public class SetShop extends Executor {
         }
 
         return true;
-    }
-
-    private void setarLoja(CommandSender sender) {
-        Player player = (Player) sender;
-        PlayerSetShopEvent setShopEvent = new PlayerSetShopEvent(player);
-        getPlugin().getServer().getPluginManager().callEvent(setShopEvent);
-        if (!setShopEvent.isCancelled()) {
-            setLojaValues(sender);
-            getPlugin().sendTitle((Player) sender, 5, 40, 10, getPlugin().getLangFile().get("info.shop-set"), "");
-            BkShop.getShopsMenu().reloadMenu();
-        }
-    }
-
-    private void setLojaValues(CommandSender sender) {
-        Player player = (Player) sender;
-        Location location = player.getLocation();
-
-        File shopFile = getPlugin().getFile("shops", player.getName().toLowerCase() + ".yml");
-        if (shopFile.exists()) {
-            getPlugin().getConfigManager().removeConfig("shops", player.getName().toLowerCase() + ".yml");
-            shopFile.delete();
-        }
-
-        Configuration config = new Configuration(getPlugin(), shopFile, ConfigType.Player_Data);
-
-        config.set("shop.player", player.getName());
-        config.setLocation("shop", location);
-        config.set("shop.visits", 0);
-        config.set("shop.last-visitor", sender.getName());
-        config.set("shop.public-visits", false);
-        config.set("shop.open", true);
-        config.set("config-file-version", 1);
-        config.saveToFile();
-        getPlugin().getConfigManager().addConfig(config);
     }
 
 }

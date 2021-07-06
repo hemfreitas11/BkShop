@@ -1,6 +1,6 @@
 package me.bkrmt.bkshop.events;
 
-import org.bukkit.configuration.Configuration;
+import me.bkrmt.bkshop.Shop;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -10,11 +10,11 @@ public class PlayerDelShopEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel = false;
 
-    private final Configuration shopConfig;
+    private final Shop shop;
 
-    public PlayerDelShopEvent(Player who, Configuration shopConfig) {
+    public PlayerDelShopEvent(Player who, Shop shop) {
         super(who);
-        this.shopConfig = shopConfig;
+        this.shop = shop;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PlayerDelShopEvent extends PlayerEvent implements Cancellable {
         this.cancel = cancel;
     }
 
-    public Configuration getShopConfig() {
-        return shopConfig;
+    public Shop getShop() {
+        return shop;
     }
 }
