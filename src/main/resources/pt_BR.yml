@@ -1,13 +1,17 @@
-#    __________       _____    ____
-#    |         \      |   |   /   /
-#    |    |     |     |   |  /   /
-#    |    |     |     |   | /   /      ____  ____
-#    |         /      |   |/   /       |  |_/  __\
-#    |         \      |       \        |   ___/
-#    |    |     |     |   |\   \       |  |
-#    |    |     |     |   | \   \      |  |        ______________
-#    |         /      |   |  \   \     |  |        |             |
 #
+#  ▄▄▄▄   ██ ▄█▀ ██████ ██░ ██ ▒█████  ██▓███
+# ▓█████▄ ██▄█▒▒██    ▒▓██░ ██▒██▒  ██▓██░  ██▒
+# ▒██▒ ▄█▓███▄░░ ▓██▄  ▒██▀▀██▒██░  ██▓██░ ██▓▒
+# ▒██░█▀ ▓██ █▄  ▒   ██░▓█ ░██▒██   ██▒██▄█▓▒ ▒
+# ░▓█  ▀█▒██▒ █▒██████▒░▓█▒░██░ ████▓▒▒██▒ ░  ░
+# ░▒▓███▀▒ ▒▒ ▓▒ ▒▓▒ ▒ ░▒ ░░▒░░ ▒░▒░▒░▒▓▒░ ░  ░
+# ▒░▒   ░░ ░▒ ▒░ ░▒  ░ ░▒ ░▒░ ░ ░ ▒ ▒░░▒ ░
+#  ░    ░░ ░░ ░░  ░  ░  ░  ░░ ░ ░ ░ ▒ ░░
+#  ░     ░  ░        ░  ░  ░  ░   ░ ░
+#       ░
+#
+#     ® BkPlugins | discord.io/bkplugins
+#                Made by: Bkr__
 
 # Aqui você pode editar os comandos do plugin, e suas descrições no comando de ajuda
 # *-------------------*=/[Comandos]\=*------------------*
@@ -64,6 +68,55 @@ commands:
 # *-----------------------*=[|]=*-----------------------*
 
 
+# Mude a aparência dos botões nos menus. Você pode adicionar animações nos nomes dos botões (mas não nas descrições, por enquanto)
+# Visite a página do plugin no spigot para saber como usar essas animações: https://www.spigotmc.org/resources/bkshop-setshop-plugin-with-gui.82193/
+# *-----------------*=/[Gui Buttons]\=*-----------------*
+gui-buttons:
+  next-page:
+    name: '{shine green bold}Próxima Página'
+    description:
+      - '&7Ir para a página &a{page-number}'
+  previous-page:
+    name: '{shine red bold}Página Anterior'
+    description:
+      - '&7Voltar para a página &c{page-number}'
+  return:
+    name: '{shine red bold}Voltar'
+    description:
+      - '&7Retornar ao menu anterior.'
+  shops:
+    name: '{shine green bold}Lojas'
+    description:
+      - '&aLista de lojas dos jogadores.'
+  visits:
+    name: '{shine gold bold}Mudar Visibilidade das Visitas'
+  close:
+    name: '{shine lightred bold}Fechar Loja'
+    description:
+      - '&cTemporariamente fecha sua loja sem deleta-la.'
+  open:
+    name: '{shine lightgreen bold}Abrir loja'
+    description:
+      - '&aReabre sua loja'
+  admin-teleport:
+    name: '{shine lightblue}Teleportar para essa loja'
+  info:
+    name: '{shine darkgray bold}Info'
+  admin-close:
+    name: '{shine lightred}Fechar essa loja'
+  admin-open:
+    name: '{shine lightgreen}Abrir essa loja'
+  admin-delete:
+    name: '{shine red bold}Deletar essa loja'
+  delete-sign:
+    name: '{shine red bold}Deletar Loja'
+  delete-confirm:
+    name: '{shine green bold}Clique aqui para confirmar'
+  delete-decline:
+    name: '{shine red bold}Clique aqui para negar'
+# *-----------------------*=[|]=*-----------------------*
+
+
 # Aqui você pode mudar todas as mensagens do plugin
 # *---------------*=/[Mensagens Gerais]\=*--------------*
 info:
@@ -72,6 +125,8 @@ info:
   color-set: '&aCor alterada para "&{color}{color}&a".'
   shop-set: '&aLoja definida com sucesso.'
   shop-deleted: '&aLoja removida com sucesso.'
+  shop-head-name: '&{shop-color}{player}'
+  shop-head-command: '&7&o/{command} &{shop-color}&o{player}'
   time-remaining: '&7Teleportando em &a{seconds}'
   list-title: '     &8&lLista Lojas Pag. {current-page}/{total-pages}'
   main-menu-title: '                 &8&lLoja'
@@ -95,27 +150,10 @@ info:
     title: 'Loja de: {player}'
   shop-closed: '&eSua loja foi fechada.'
   shop-open: '&aSua loja foi reaberta.'
-  return-name: '&c&lVoltar'
-  return-desc: '&4Volta para a pagina anterior.'
-  next-name: '&2&lProximo'
-  next-desc: '&aVai para a proxima pagina.'
-  shops-name: '&2&lLojas'
   visits-name: '&{color}&lConfigurar Visita'
   shops-desc: '&aLista de lojas de jogadores'
-  info-name: '&8&lInfo'
-  close-name: '&c&lFechar Loja'
-  close-desc: '&cTemporariamente fecha sua loja sem deleta-la'
-  open-name: '&a&lAbrir Loja'
-  open-desc: '&aReabre sua loja'
-  admin-go-to-shop: '&oIr ate essa loja'
-  admin-close-shop: '&c&lFechar essa loja'
-  admin-open-shop: '&a&lAbrir essa loja'
-  admin-delete-shop: '&4&lDeletar essa loja'
   delete-confirm-title: '&4&lConfirmar remover?'
-  delete-sign: '&4&lDeletar loja'
   delete-sign-lore: '&4&oTem certeza que dejesa deletar a loja?'
-  delete-confirm: '&2&lClique aqui parar confirmar'
-  delete-decline: '&4&lClique aqui para negar'
 # *-----------------------*=[|]=*-----------------------*
 
 

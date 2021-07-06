@@ -1,13 +1,17 @@
-#    __________       _____    ____
-#    |         \      |   |   /   /
-#    |    |     |     |   |  /   /
-#    |    |     |     |   | /   /      ____  ____
-#    |         /      |   |/   /       |  |_/  __\
-#    |         \      |       \        |   ___/
-#    |    |     |     |   |\   \       |  |
-#    |    |     |     |   | \   \      |  |        ______________
-#    |         /      |   |  \   \     |  |        |             |
 #
+#  ▄▄▄▄   ██ ▄█▀ ██████ ██░ ██ ▒█████  ██▓███
+# ▓█████▄ ██▄█▒▒██    ▒▓██░ ██▒██▒  ██▓██░  ██▒
+# ▒██▒ ▄█▓███▄░░ ▓██▄  ▒██▀▀██▒██░  ██▓██░ ██▓▒
+# ▒██░█▀ ▓██ █▄  ▒   ██░▓█ ░██▒██   ██▒██▄█▓▒ ▒
+# ░▓█  ▀█▒██▒ █▒██████▒░▓█▒░██░ ████▓▒▒██▒ ░  ░
+# ░▒▓███▀▒ ▒▒ ▓▒ ▒▓▒ ▒ ░▒ ░░▒░░ ▒░▒░▒░▒▓▒░ ░  ░
+# ▒░▒   ░░ ░▒ ▒░ ░▒  ░ ░▒ ░▒░ ░ ░ ▒ ▒░░▒ ░
+#  ░    ░░ ░░ ░░  ░  ░  ░  ░░ ░ ░ ░ ▒ ░░
+#  ░     ░  ░        ░  ░  ░  ░   ░ ░
+#       ░
+#
+#     ® BkPlugins | discord.io/bkplugins
+#                Made by: Bkr__
 
 # This is where you can customize the commands of the plugin, their descriptions and usages in the help command
 # *-------------------*=/[Commands]\=*------------------*
@@ -63,6 +67,10 @@ commands:
     usage: '/delshop'
 # *-----------------------*=[|]=*-----------------------*
 
+
+# Change how the buttons of the menus look. You can add animations to the names of buttons (not the descriptions, for now)
+# Visit the plugin's spigot page to know how to use the animations: https://www.spigotmc.org/resources/bkshop-setshop-plugin-with-gui.82193/
+# *-----------------*=/[Gui Buttons]\=*-----------------*
 gui-buttons:
   next-page:
     name: '{shine green bold}Next Page'
@@ -106,14 +114,8 @@ gui-buttons:
     name: '{shine green bold}Click here to confirm'
   delete-decline:
     name: '{shine red bold}Click here to decline'
+# *-----------------------*=[|]=*-----------------------*
 
-#  admin-go-to-shop: '&oTeleport to this shop'
-#  admin-close-shop: '&c&lClose this shop'
-#  admin-open-shop: '&a&lOpen this shop'
-#  admin-delete-shop: '&4&lDelete this shop'
-#  delete-sign: '&4&lDelete Shop'
-#  delete-confirm: '&2&lClick here to confirm'
-#  delete-decline: '&4&lClick here to decline'
 
 # Here you can change all the messages in the plugin
 # *-----------------*=/[Info Messages]\=*---------------*
