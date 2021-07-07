@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
@@ -97,6 +98,12 @@ public final class BkShop extends BkPlugin {
         sendConsoleMessage(InternalMessages.LOADING_SHOPS.getMessage(this));
         shopsManager = new ShopsManager();
         menuManager = new MenuManager();
+
+        Plugin papi = getServer().getPluginManager().getPlugin("PlaceholderAPI");
+        if (papi != null && papi.isEnabled()) {
+            sendConsoleMessage(InternalMessages.PLACEHOLDER_FOUND.getMessage(this));
+            new PAPIExpansion(this).register();
+        }
 
         if (TeleportCore.INSTANCE.getPlayersInCooldown().get("Core-Started") == null)
             TeleportCore.INSTANCE.start(this);

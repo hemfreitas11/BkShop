@@ -2,5 +2,7 @@ name: BkShop
 version: ${project.version}
 main: me.bkrmt.bkshop.BkShop
 api-version: 1.13
+softdepend:
+  - PlaceholderAPI
 authors: [Bkr__]
 description: 'Setshop plugin'

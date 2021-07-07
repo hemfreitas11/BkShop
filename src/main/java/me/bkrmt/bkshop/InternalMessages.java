@@ -11,7 +11,9 @@ public enum InternalMessages {
     PLUGIN_STARTING("§7[§1BkShop§7] §bPlugin starting...",
     "§7[§1BkLoja§7] §bPlugin iniciando..."),
     PLUGIN_STARTED("§7[§1BkShop§7] §bPlugin started!",
-    "§7[§1BkLoja§7] §bPlugin iniciado!");
+    "§7[§1BkLoja§7] §bPlugin iniciado!"),
+    PLACEHOLDER_FOUND("§7[§1BkShop§7] §bPlaceholderAPI found, enabling support...",
+    "§7[§1BkLoja§7] §bPlaceholderAPI encontrado, habilitando suporte...");
 
     private final String[] message;
 
