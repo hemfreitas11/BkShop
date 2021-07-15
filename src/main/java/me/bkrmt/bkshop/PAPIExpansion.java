@@ -1,5 +1,7 @@
 package me.bkrmt.bkshop;
 
+import me.bkrmt.bkshop.api.Shop;
+import me.bkrmt.bkshop.api.ShopState;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 

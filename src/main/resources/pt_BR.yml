@@ -89,7 +89,7 @@ gui-buttons:
     description:
       - '&aLista de lojas dos jogadores.'
   visits:
-    name: '{shine gold bold}Mudar Visibilidade das Visitas'
+    name: '&{color}Mudar Visibilidade das Visitas'
   close:
     name: '{shine lightred bold}Fechar Loja'
     description:

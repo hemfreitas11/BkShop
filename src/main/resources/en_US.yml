@@ -89,7 +89,7 @@ gui-buttons:
     description:
       - '&aPlayers shop list'
   visits:
-    name: '{shine gold bold}Configure Visit Info'
+    name: '&{color}Configure Visit Info'
   close:
     name: '{shine lightred bold}Close shop'
     description:

@@ -3,7 +3,8 @@ package me.bkrmt.bkshop.commands;
 import me.bkrmt.bkcore.BkPlugin;
 import me.bkrmt.bkcore.command.Executor;
 import me.bkrmt.bkshop.BkShop;
-import me.bkrmt.bkshop.Shop;
+import me.bkrmt.bkshop.api.Shop;
+import me.bkrmt.bkshop.menus.MainMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -38,7 +39,7 @@ public class ShopCmd extends Executor {
                     sender.sendMessage(getPlugin().getLangFile().get(((Player) sender), "error.unkown-shop").replace("{player}", args[0]));
                 }
             } else if (args.length == 0) {
-                BkShop.getInstance().getMenuManager().openMainMenu((Player) sender);
+                new MainMenu((Player) sender).openMenu();
             } else {
                 sendUsage(sender);
             }

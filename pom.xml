@@ -6,7 +6,7 @@
 
     <groupId>me.bkrmt</groupId>
     <artifactId>bkshop</artifactId>
-    <version>3</version>
+    <version>3.1</version>
     <packaging>jar</packaging>
 
     <name>BkShop</name>
@@ -80,7 +80,7 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>me.bkrmt.teleport</pattern>
-                                    <shadedPattern>me.bkrmt.${project.artifactId}.bkcore.teleport</shadedPattern>
+                                    <shadedPattern>me.bkrmt.${project.artifactId}.teleport</shadedPattern>
                                     <excludes>
                                         <exclude>me.bkrmt.teleport.events.PlayerBkTeleportCountStartEvent</exclude>
                                         <exclude>me.bkrmt.teleport.events.PlayerBkTeleportEvent</exclude>
@@ -109,7 +109,6 @@
             <groupId>me.bkrmt</groupId>
             <artifactId>bkcore</artifactId>
             <version>1.0</version>
-            <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>

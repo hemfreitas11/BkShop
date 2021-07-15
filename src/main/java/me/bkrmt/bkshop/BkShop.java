@@ -5,13 +5,15 @@ import me.bkrmt.bkcore.command.CommandModule;
 import me.bkrmt.bkcore.command.HelpCmd;
 import me.bkrmt.bkcore.command.ReloadCmd;
 import me.bkrmt.bkcore.textanimator.AnimatorManager;
+import me.bkrmt.bkshop.api.MenuManager;
+import me.bkrmt.bkshop.api.ShopsManager;
 import me.bkrmt.bkshop.commands.DelShopCmd;
 import me.bkrmt.bkshop.commands.SetShop;
 import me.bkrmt.bkshop.commands.ShopCmd;
 import me.bkrmt.bkshop.commands.ShopsCmd;
-import me.bkrmt.bkshop.menus.MenuManager;
 import me.bkrmt.opengui.OpenGUI;
 import me.bkrmt.teleport.TeleportCore;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +21,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,6 +53,19 @@ public final class BkShop extends BkPlugin {
         sendConsoleMessage("      §b© BkPlugins | discord.io/bkplugins");
         sendConsoleMessage("");
         sendConsoleMessage(InternalMessages.PLUGIN_STARTING.getMessage(this));
+        
+        File shopsFolder = getFile("shops", "");
+        if (!shopsFolder.exists()) {
+            if (!shopsFolder.mkdir()) {
+                try {
+                    throw new IOException("The plugin was not started because the folder \"shops\" could not be created.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Bukkit.getServer().getPluginManager().disablePlugin(this);
+                    return;
+                }
+            }
+        }
 
         getCommandMapper()
                 .addCommand(new CommandModule(new HelpCmd(plugin, "bkshop", ""), (a, b, c, d) -> Collections.singletonList("")))
@@ -96,8 +113,8 @@ public final class BkShop extends BkPlugin {
 
         frameType = getConfigManager().getConfig().getInt("frame");
         sendConsoleMessage(InternalMessages.LOADING_SHOPS.getMessage(this));
-        shopsManager = new ShopsManager();
-        menuManager = new MenuManager();
+        shopsManager = new me.bkrmt.bkshop.ShopsManager();
+        menuManager = new me.bkrmt.bkshop.menus.MenuManager();
 
         Plugin papi = getServer().getPluginManager().getPlugin("PlaceholderAPI");
         if (papi != null && papi.isEnabled()) {
@@ -111,7 +128,6 @@ public final class BkShop extends BkPlugin {
         sendConsoleMessage(InternalMessages.PLUGIN_STARTED.getMessage(this));
     }
 
-    @Override
     public AnimatorManager getAnimatorManager() {
         return animatorManager;
     }

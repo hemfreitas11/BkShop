@@ -3,21 +3,26 @@ package me.bkrmt.bkshop;
 import io.netty.util.internal.ConcurrentSet;
 import me.bkrmt.bkcore.config.ConfigType;
 import me.bkrmt.bkcore.config.Configuration;
-import me.bkrmt.bkshop.events.PlayerDelShopEvent;
-import me.bkrmt.bkshop.events.PlayerSetShopEvent;
+import me.bkrmt.bkshop.api.Shop;
+import me.bkrmt.bkshop.api.ShopState;
+import me.bkrmt.bkshop.api.events.PlayerDelShopEvent;
+import me.bkrmt.bkshop.api.events.PlayerSetShopEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
+import java.lang.reflect.MalformedParametersException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ShopsManager {
+public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
     private final List<Shop> shops;
     private final ConcurrentSet<File> toBeConverted;
 
@@ -27,13 +32,15 @@ public class ShopsManager {
         File[] shopFiles = BkShop.getInstance().getFile("shops", "").listFiles();
         if (shopFiles.length > 0) {
             for (File shopFile : shopFiles) {
-                String uuidString = shopFile.getName().replace(".yml", "");
-                if (!uuidString.isEmpty()) {
-                    try {
-                        UUID uuid = UUID.fromString(uuidString);
-                        shopAdd(new Shop(Bukkit.getOfflinePlayer(uuid)));
-                    } catch (Exception ignored) {
-                        convertToUUID(shopFile, uuidString);
+                if (verifyShop(shopFile)) {
+                    String uuidString = shopFile.getName().replace(".yml", "");
+                    if (!uuidString.isEmpty()) {
+                        try {
+                            UUID uuid = UUID.fromString(uuidString);
+                            shopAdd(new me.bkrmt.bkshop.Shop(Bukkit.getOfflinePlayer(uuid)));
+                        } catch (Exception ignored) {
+                            convertToUUID(shopFile, uuidString);
+                        }
                     }
                 }
             }
@@ -55,6 +62,47 @@ public class ShopsManager {
         }, BkShop.getInstance());
     }
 
+    private boolean verifyShop(File shopFile) {
+        boolean returnValue = false;
+        try {
+            FileConfiguration shopConfig = YamlConfiguration.loadConfiguration(shopFile);
+            boolean hasChanged = false;
+
+            if (shopConfig.get("shop.world") == null ||
+                    shopConfig.get("shop.x") == null ||
+                    shopConfig.get("shop.y") == null ||
+                    shopConfig.get("shop.z") == null) {
+                throw new MalformedParametersException("Invalid Shop");
+            }
+
+            if (shopConfig.get("shop.player-name") == null) {
+                shopConfig.set("shop.player-name", "N/A");
+                hasChanged = true;
+            }
+
+            if (shopConfig.get("shop.last-visitor") == null) {
+                shopConfig.set("shop.last-visitor", "N/A");
+                hasChanged = true;
+            }
+
+            if (shopConfig.get("shop.pitch") == null) {
+                shopConfig.set("shop.pitch", 0);
+                hasChanged = true;
+            }
+
+            if (shopConfig.get("shop.yaw") == null) {
+                shopConfig.set("shop.yaw", 0);
+                hasChanged = true;
+            }
+
+            if (hasChanged) shopConfig.save(shopFile);
+            returnValue = true;
+        } catch (Exception ignored) {
+            BkShop.getInstance().sendConsoleMessage(InternalMessages.INVALID_SHOP.getMessage(BkShop.getInstance()).replace("{0}", shopFile.getName()));
+        }
+        return returnValue;
+    }
+
     private void convertToUUID(File shopFile, String name) {
         Player player = Bukkit.getPlayer(name);
 
@@ -63,11 +111,11 @@ public class ShopsManager {
             if (shopFile.renameTo(BkShop.getInstance().getFile("shops", player.getUniqueId() + ".yml"))) {
                 if (toBeConverted.size() > 0) toBeConverted.removeIf(file -> file.getName().equalsIgnoreCase(oldName));
                 if (shops.size() > 0) shops.removeIf(shop -> shop.getOwnerName().equalsIgnoreCase(player.getName()));
-                shopAdd(new Shop(player));
+                shopAdd(new me.bkrmt.bkshop.Shop(player));
             }
         } else {
             toBeConverted.add(shopFile);
-            shopAdd(new Shop(name));
+            shopAdd(new me.bkrmt.bkshop.Shop(name));
         }
     }
 
@@ -80,10 +128,10 @@ public class ShopsManager {
                 BkShop.getInstance().getShopsManager().getShop(((Player) sender).getUniqueId()).setLocation(((Player) sender).getLocation());
             } else {
                 BkShop.getInstance().getShopsManager().createShop(player.getUniqueId())
-                    .setLastVisitor(player.getName())
-                    .setVisits(1)
-                    .setPublicData(null, false)
-                    .setShopState(null, ShopState.OPEN);
+                        .setLastVisitor(player.getName())
+                        .setVisits(1)
+                        .setPublicData(false)
+                        .setShopState(ShopState.OPEN);
             }
             BkShop.getInstance().sendTitle((Player) sender, 5, 40, 10, BkShop.getInstance().getLangFile().get(((Player) sender), "info.shop-set"), "");
         }
@@ -93,10 +141,12 @@ public class ShopsManager {
         if (!shops.contains(shop)) shops.add(shop);
     }
 
+    @Override
     public List<Shop> getShops() {
         return shops;
     }
 
+    @Override
     public Shop getShop(UUID ownerUuid) {
         Shop returnValue = null;
         for (Shop shop : shops) {
@@ -108,12 +158,15 @@ public class ShopsManager {
         return returnValue;
     }
 
+    @Override
     public void saveShops() {
+        shops.forEach(Shop::saveProperties);
         for (Shop shop : shops) {
             shop.saveProperties();
         }
     }
 
+    @Override
     public Shop getShop(String ownerName) {
         Shop returnValue = null;
         for (Shop shop : shops) {
@@ -125,21 +178,24 @@ public class ShopsManager {
         return returnValue;
     }
 
+    @Override
     public Shop createShop(UUID uuid) {
         File shopFile = BkShop.getInstance().getFile("shops", uuid + ".yml");
         if (!shopFile.exists()) {
             Configuration newShopConfig = new Configuration(BkShop.getInstance(), shopFile, ConfigType.Player_Data);
             BkShop.getInstance().getConfigManager().addConfig(newShopConfig);
-            Shop newShop = new Shop(Bukkit.getOfflinePlayer(uuid));
+            Shop newShop = new me.bkrmt.bkshop.Shop(Bukkit.getOfflinePlayer(uuid));
             shops.add(newShop);
             return newShop;
         } else return BkShop.getInstance().getShopsManager().getShop(uuid);
     }
 
+    @Override
     public void deleteShop(CommandSender sender, UUID ownerUuid) {
         delete(sender, getShop(ownerUuid));
     }
 
+    @Override
     public void deleteShop(CommandSender sender, String name) {
         delete(sender, getShop(name));
     }

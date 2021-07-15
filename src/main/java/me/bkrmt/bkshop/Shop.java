@@ -1,14 +1,15 @@
 package me.bkrmt.bkshop;
 
-import me.bkrmt.bkcore.PagedItem;
 import me.bkrmt.bkcore.PagedList;
 import me.bkrmt.bkcore.Utils;
 import me.bkrmt.bkcore.config.Configuration;
-import me.bkrmt.opengui.GUI;
-import me.bkrmt.opengui.ItemBuilder;
-import me.bkrmt.opengui.Page;
-import me.bkrmt.opengui.Rows;
+import me.bkrmt.bkshop.api.ShopState;
+import me.bkrmt.opengui.MenuSound;
 import me.bkrmt.opengui.event.ElementResponse;
+import me.bkrmt.opengui.gui.GUI;
+import me.bkrmt.opengui.gui.Rows;
+import me.bkrmt.opengui.item.ItemBuilder;
+import me.bkrmt.opengui.page.Page;
 import me.bkrmt.teleport.Teleport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Shop implements PagedItem, Comparable<Shop> {
+public class Shop implements me.bkrmt.bkshop.api.Shop {
     private final OfflinePlayer owner;
     private String color;
     private final String ownerName;
@@ -51,7 +52,7 @@ public class Shop implements PagedItem, Comparable<Shop> {
         this.description = shopConfig.get("shop.message") == null ? null : shopConfig.getString("shop.message");
         this.visits = shopConfig.getInt("shop.visits");
         this.publicData = shopConfig.getBoolean("shop.public-visits");
-        this.lastVisitor = shopConfig.getString("shop.last-visitor");
+        this.lastVisitor = shopConfig.get("shop.last-visitor") == null ? "N\\A" : shopConfig.getString("shop.last-visitor");
         this.shopState = shopConfig.getBoolean("shop.open") ? ShopState.OPEN : ShopState.CLOSED;
         if (shopConfig.get("shop.world") == null) {
             if (owner.isOnline()) {
@@ -65,7 +66,6 @@ public class Shop implements PagedItem, Comparable<Shop> {
         reloadDisplayItem();
 
         this.displayItem = new ItemBuilder(BkShop.getInstance().createHead(owner.getUniqueId(), displayName, lore));
-        displayItem.setUnchangedName(displayName);
         if (!shopConfig.getFile().exists()) shopConfig.saveToFile();
     }
 
@@ -90,10 +90,10 @@ public class Shop implements PagedItem, Comparable<Shop> {
         reloadDisplayItem();
 
         this.displayItem = new ItemBuilder(BkShop.getInstance().createHead(Bukkit.getOfflinePlayer(ownerName).getUniqueId(), displayName, lore));
-        displayItem.setUnchangedName(displayName);
         if (!shopConfig.getFile().exists()) shopConfig.saveToFile();
     }
 
+    @Override
     public void reloadDisplayItem() {
         this.displayName = Utils.translateColor(BkShop.getInstance().getLangFile().get(owner, "info.shop-head-name")
                 .replace("{shop-color}", color)
@@ -113,65 +113,77 @@ public class Shop implements PagedItem, Comparable<Shop> {
         if (description != null) lore.add(Utils.translateColor("&" + color + description));
     }
 
+    @Override
     public OfflinePlayer getOwner() {
         return owner;
     }
 
+    @Override
     public String getColor() {
         return color;
     }
 
+    @Override
     public String getOwnerName() {
         return ownerName;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public int getVisits() {
         return visits;
     }
 
+    @Override
     public ShopState getShopState() {
         return shopState;
     }
 
+    @Override
     public String getLastVisitor() {
         return lastVisitor;
     }
 
+    @Override
     public Location getLocation() {
         return location;
     }
 
+    @Override
     public boolean isPublicData() {
         return publicData;
     }
 
-    public Shop setPublicData(Player sender, boolean publicData) {
+    @Override
+    public Shop setPublicData(boolean publicData) {
         this.publicData = publicData;
         saveValue("public-visits", publicData);
-        if (sender != null)
-            sender.sendMessage(BkShop.getInstance().getLangFile().get(owner, "info.info-visit-" + (publicData ? "private" : "public") + "-message"));
         return this;
     }
 
-    public Shop setShopState(Player sender, ShopState state) {
+    @Override
+    public Shop setShopState(ShopState state) {
         this.shopState = state;
         saveValue("open", state.equals(ShopState.OPEN));
-        if (sender != null) {
-//            sender.closeInventory();
-            sender.sendMessage(BkShop.getInstance().getLangFile().get(owner, "info.shop-" + (state.equals(ShopState.OPEN) ? "open" : "closed")));
+        return this;
+    }
+
+    @Override
+    public Shop setLastVisitor(String lastVisitor) {
+        boolean isEmpty = this.lastVisitor == null;
+        this.lastVisitor = lastVisitor;
+        if (isEmpty) {
+            getConfig().set("shop.last-visitor", lastVisitor);
+            getConfig().saveToFile();
         }
         return this;
     }
 
-    public Shop setLastVisitor(String lastVisitor) {
-        this.lastVisitor = lastVisitor;
-        return this;
-    }
-
+    @Override
     public Shop setLocation(Location location) {
         this.location = location;
         getConfig().setLocation("shop", location);
@@ -179,32 +191,38 @@ public class Shop implements PagedItem, Comparable<Shop> {
         return this;
     }
 
+    @Override
     public Shop incrementVisits() {
         visits += 1;
         return this;
     }
 
+    @Override
     public Shop setVisits(int visits) {
         this.visits = visits;
         return this;
     }
 
+    @Override
     public Shop setColor(String color) {
         this.color = color;
         saveValue("color", color);
         return this;
     }
 
+    @Override
     public Shop setDescription(String description) {
         this.description = description;
         saveValue("message", description);
         return this;
     }
 
+    @Override
     public Configuration getConfig() {
         return BkShop.getInstance().getConfigManager().getConfig("shops", (owner == null ? ownerName : owner.getUniqueId()) + ".yml");
     }
 
+    @Override
     public void teleportToShop(Player player) {
         if (player.getName().equalsIgnoreCase(ownerName)) {
             beginTeleport(player);
@@ -219,7 +237,7 @@ public class Shop implements PagedItem, Comparable<Shop> {
     }
 
     private void beginTeleport(Player player) {
-        new Teleport(BkShop.getInstance(), player, BkShop.getInstance().getConfigManager().getConfig().getBoolean("cancel-on-move"))
+        new Teleport(BkShop.getInstance(), player, BkShop.getInstance().getConfigManager().getConfig().getBoolean("teleport-countdown.cancel-on-move"))
                 .setLocation(getOwnerName(), getLocation())
                 .setTitle(Utils.translateColor("&" + getColor() + BkShop.getInstance().getLangFile().get(owner, "info.warped.title").replace("{player}", player.getName())))
                 .setSubtitle(Utils.translateColor("&" + getColor() + (description != null && !description.isEmpty() ? description : "")))
@@ -246,6 +264,7 @@ public class Shop implements PagedItem, Comparable<Shop> {
     @Override
     public ElementResponse getElementResponse(PagedList list, Page currentPage) {
         return event -> {
+            MenuSound.CLICK.play(event.getWhoClicked());
             if (event.getWhoClicked().hasPermission("bkshop.admin") || event.getWhoClicked().getName().equalsIgnoreCase(ownerName)) {
                 if (getConfig().getFile().exists()) {
                     openOptionsMenu((Player) event.getWhoClicked(), currentPage.getPageNumber());
@@ -258,6 +277,7 @@ public class Shop implements PagedItem, Comparable<Shop> {
         };
     }
 
+    @Override
     public void openDeleteMenu(Player player, int previousPage) {
         BkShop plugin = BkShop.getInstance();
 
@@ -265,24 +285,19 @@ public class Shop implements PagedItem, Comparable<Shop> {
 
         ItemBuilder info = new ItemBuilder(plugin.getHandler().getItemManager().getSign())
                 .setName(plugin.getLangFile().get(player, "gui-buttons.delete-sign.name"))
-                .setUnchangedName(plugin.getLangFile().get(player, "gui-buttons.delete-sign.name"))
-                .setLore(plugin.getLangFile().getStringList(player, "info.delete-sign-lore"))
-                .update();
+                .setLore(plugin.getLangFile().getStringList(player, "info.delete-sign-lore"));
 
         ItemBuilder confirm = new ItemBuilder(Material.EMERALD_BLOCK)
-                .setName(plugin.getLangFile().get(player, "gui-buttons.delete-confirm.name"))
-                .setUnchangedName(plugin.getLangFile().get(player, "gui-buttons.delete-confirm.name"))
-                .update();
+                .setName(plugin.getLangFile().get(player, "gui-buttons.delete-confirm.name"));
 
         ItemBuilder cancel = new ItemBuilder(Material.REDSTONE_BLOCK)
-                .setName(plugin.getLangFile().get(player, "gui-buttons.delete-decline.name"))
-                .setUnchangedName(plugin.getLangFile().get(player, "gui-buttons.delete-decline.name"))
-                .update();
+                .setName(plugin.getLangFile().get(player, "gui-buttons.delete-decline.name"));
 
         menu.setItemOnXY(5, 2, info, "delete-menu-info-" + player.getName().toLowerCase() + "-info", event -> {
         });
 
         menu.setItemOnXY(7, 3, confirm, "delete-menu-confirm-" + player.getName().toLowerCase() + "-confirm", event -> {
+            MenuSound.SUCCESS.play(event.getWhoClicked());
             event.getWhoClicked().closeInventory();
             if (owner == null) {
                 plugin.getShopsManager().deleteShop(event.getWhoClicked(), ownerName);
@@ -291,13 +306,17 @@ public class Shop implements PagedItem, Comparable<Shop> {
             }
         });
 
-        menu.setItemOnXY(3, 3, cancel, "delete-menu-cancel-" + player.getName().toLowerCase() + "-cancel", event -> openOptionsMenu((Player) event.getWhoClicked(), previousPage));
+        menu.setItemOnXY(3, 3, cancel, "delete-menu-cancel-" + player.getName().toLowerCase() + "-cancel", event -> {
+            MenuSound.BACK.play(event.getWhoClicked());
+            openOptionsMenu((Player) event.getWhoClicked(), previousPage);
+        });
 
         BkShop.getInstance().getMenuManager().buildPageFrame(menu);
 
         menu.openGui(player);
     }
 
+    @Override
     public void openOptionsMenu(Player shopUser, int previousPage) {
         BkShop plugin = BkShop.getInstance();
         Page page = new Page(BkShop.getInstance(), BkShop.getInstance().getAnimatorManager(), new GUI(
@@ -309,9 +328,7 @@ public class Shop implements PagedItem, Comparable<Shop> {
 
         ItemBuilder teleportBuilder = new ItemBuilder(plugin.getHandler().getItemManager().getPearl())
                 .setName(plugin.getLangFile().get(owner, "gui-buttons.admin-teleport.name"))
-                .setUnchangedName(plugin.getLangFile().get(owner, "gui-buttons.admin-teleport.name"))
-                .hideTags()
-                .update();
+                .hideTags();
 
         page.setItemOnXY(5, 2, teleportBuilder, shopUser.getName().toLowerCase() + "-shop-options-teleport", event -> {
             event.getWhoClicked().closeInventory();
@@ -320,48 +337,54 @@ public class Shop implements PagedItem, Comparable<Shop> {
 
         ItemBuilder closeBuilder = new ItemBuilder(plugin.getHandler().getItemManager().getRedPane())
                 .setName(plugin.getLangFile().get(owner, "gui-buttons.admin-close.name"))
-                .setUnchangedName(plugin.getLangFile().get(owner, "gui-buttons.admin-close.name"))
-                .hideTags()
-                .update();
+                .hideTags();
 
-        page.setItemOnXY(4, 3, closeBuilder, shopUser.getName().toLowerCase() + "-shop-options-close", event -> setShopState(shopUser, ShopState.CLOSED));
+        page.setItemOnXY(4, 3, closeBuilder, shopUser.getName().toLowerCase() + "-shop-options-close", event -> {
+            MenuSound.WARN.play(event.getWhoClicked());
+            setShopState(ShopState.CLOSED);
+            page.displayItemMessage(event.getSlot(), 1.5, ChatColor.YELLOW, BkShop.getInstance().getLangFile().get(shopUser, "info.shop-closed"), null);
+        });
 
         ItemBuilder openBuilder = new ItemBuilder(plugin.getHandler().getItemManager().getGreenPane())
                 .setName(plugin.getLangFile().get(owner, "gui-buttons.admin-open.name"))
-                .setUnchangedName(plugin.getLangFile().get(owner, "gui-buttons.admin-open.name"))
-                .hideTags()
-                .update();
+                .hideTags();
 
-        page.setItemOnXY(6, 3, openBuilder, shopUser.getName().toLowerCase() + "-shop-options-open", event -> setShopState(shopUser, ShopState.OPEN));
+        page.setItemOnXY(6, 3, openBuilder, shopUser.getName().toLowerCase() + "-shop-options-open", event -> {
+            MenuSound.SUCCESS.play(event.getWhoClicked());
+            setShopState(ShopState.OPEN);
+            page.displayItemMessage(event.getSlot(), 1.5, ChatColor.GREEN, BkShop.getInstance().getLangFile().get(shopUser, "info.shop-open"), null);
+        });
 
         ItemBuilder deleteBuilder = new ItemBuilder(Material.TNT)
                 .setName(plugin.getLangFile().get(owner, "gui-buttons.admin-delete.name"))
-                .setUnchangedName(plugin.getLangFile().get(owner, "gui-buttons.admin-delete.name"))
-                .hideTags()
-                .update();
+                .hideTags();
 
-        page.setItemOnXY(5, 4, deleteBuilder, shopUser.getName().toLowerCase() + "-shop-options-open", event -> openDeleteMenu(shopUser, previousPage));
+        page.setItemOnXY(5, 4, deleteBuilder, shopUser.getName().toLowerCase() + "-shop-options-open", event -> {
+            MenuSound.CLICK.play(event.getWhoClicked());
+            openDeleteMenu(shopUser, previousPage);
+        });
 
         BkShop.getInstance().getMenuManager().buildPageFrame(page);
 
         page.setItemOnXY(1, 3,
-            new ItemBuilder(plugin.getHandler().getItemManager().getRedWool())
-                .setName(plugin.getLangFile().get(owner, "gui-buttons.previous-page.name"))
-                .setUnchangedName(plugin.getLangFile().get(owner, "gui-buttons.previous-page.name"))
-                .setLore(plugin.getLangFile().getStringList("gui-buttons.return.description"))
-                .hideTags()
-                .update(),
-            shopUser.getName().toLowerCase() + "-shops-list-back-button",
-            event -> BkShop.getInstance().getMenuManager().openShopsMenu(shopUser, previousPage - 1));
+                new ItemBuilder(plugin.getHandler().getItemManager().getRedWool())
+                        .setName(plugin.getLangFile().get(owner, "gui-buttons.previous-page.name"))
+                        .setLore(plugin.getLangFile().getStringList("gui-buttons.return.description")),
+                shopUser.getName().toLowerCase() + "-shops-list-back-button",
+                event -> {
+                    MenuSound.BACK.play(event.getWhoClicked());
+                    BkShop.getInstance().getMenuManager().openShopsMenu(shopUser, previousPage - 1);
+                });
 
         page.openGui(shopUser);
     }
 
+    @Override
     public void saveProperties() {
         getConfig().setLocation("shop", location);
         if (color != null) getConfig().set("shop.color", color);
         if (description != null) getConfig().set("shop.message", description);
-        if (getConfig().get("shop.player-name") == null) getConfig().set("shop.player-name", ownerName); 
+        if (getConfig().get("shop.player-name") == null) getConfig().set("shop.player-name", ownerName);
         getConfig().set("shop.visits", visits);
         getConfig().set("shop.last-visitor", lastVisitor);
         getConfig().set("shop.public-visits", publicData);
@@ -369,14 +392,14 @@ public class Shop implements PagedItem, Comparable<Shop> {
         getConfig().saveToFile();
     }
 
+    @Override
+    public int compareTo(me.bkrmt.bkshop.api.Shop shop) {
+        if (shop.getOwnerName().equals(getOwnerName())) return 0;
+        else return 1;
+    }
+
     private void saveValue(String key, Object value) {
         getConfig().set("shop" + (key.isEmpty() ? "" : "." + key), value);
         getConfig().saveToFile();
-    }
-
-    @Override
-    public int compareTo(Shop shop) {
-        if (shop.getOwnerName().equals(getOwnerName())) return 0;
-        else return 1;
     }
 }

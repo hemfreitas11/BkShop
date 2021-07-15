@@ -12,6 +12,8 @@ public enum InternalMessages {
     "§7[§1BkLoja§7] §bPlugin iniciando..."),
     PLUGIN_STARTED("§7[§1BkShop§7] §bPlugin started!",
     "§7[§1BkLoja§7] §bPlugin iniciado!"),
+    INVALID_SHOP("§7[§4BkShop§7] §cThe shop {0} is invalid and could not be loaded!",
+    "§7[§4BkLoja§7] §cA loja {0} esta invalida e nao pode ser carregada!"),
     PLACEHOLDER_FOUND("§7[§1BkShop§7] §bPlaceholderAPI found, enabling support...",
     "§7[§1BkLoja§7] §bPlaceholderAPI encontrado, habilitando suporte...");
 

@@ -2,12 +2,13 @@ package me.bkrmt.bkshop.menus;
 
 import me.bkrmt.bkcore.Utils;
 import me.bkrmt.bkshop.BkShop;
-import me.bkrmt.bkshop.Shop;
-import me.bkrmt.bkshop.ShopState;
-import me.bkrmt.opengui.GUI;
-import me.bkrmt.opengui.ItemBuilder;
-import me.bkrmt.opengui.Page;
-import me.bkrmt.opengui.Rows;
+import me.bkrmt.bkshop.api.Shop;
+import me.bkrmt.bkshop.api.ShopState;
+import me.bkrmt.opengui.MenuSound;
+import me.bkrmt.opengui.gui.GUI;
+import me.bkrmt.opengui.gui.Rows;
+import me.bkrmt.opengui.item.ItemBuilder;
+import me.bkrmt.opengui.page.Page;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,12 +17,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainMenu {
+public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
     private final Page page;
     private final BkShop plugin;
     private final Player player;
 
-    protected MainMenu(Player player) {
+    public MainMenu(Player player) {
         this.player = player;
         this.plugin = BkShop.getInstance();
         page = new Page(BkShop.getInstance(), BkShop.getInstance().getAnimatorManager(), new GUI(
@@ -30,11 +31,13 @@ public class MainMenu {
         setStaticButtons();
     }
 
-    protected Page getPage() {
+    @Override
+    public Page getPage() {
         return page;
     }
 
-    protected Player getPlayer() {
+    @Override
+    public Player getPlayer() {
         return player;
     }
 
@@ -44,16 +47,16 @@ public class MainMenu {
 
         ItemBuilder shopsMenu = new ItemBuilder(Material.EMERALD)
                 .setName(plugin.getLangFile().get(player, "gui-buttons.shops.name"))
-                .setUnchangedName(plugin.getLangFile().get(player, "gui-buttons.shops.name"))
                 .setLore(plugin.getLangFile().getStringList(player, "info.shops-desc"))
-                .hideTags()
-                .update();
+                .hideTags();
 
         getPage().pageSetItem(22, shopsMenu, player.getName().toLowerCase() + "-main-menu-shops-list", event -> {
             if (plugin.getShopsManager().getShops().size() > 0) {
+                MenuSound.CLICK.play(event.getWhoClicked());
                 plugin.getMenuManager().openShopsMenu(player, 0);
             } else {
-                event.getWhoClicked().sendMessage(plugin.getLangFile().get(player, "error.no-created-shop"));
+                MenuSound.ERROR.play(event.getWhoClicked());
+                page.displayItemMessage(22, 1.5, ChatColor.RED, plugin.getLangFile().get(player, "error.no-created-shop"), null);
             }
         });
     }
@@ -61,24 +64,29 @@ public class MainMenu {
     private void setOpenButtons(ItemStack greenPane, String s, String s2, String s3, boolean b, int slot) {
         ItemBuilder openBuilder = new ItemBuilder(greenPane)
                 .setName(plugin.getLangFile().get(player, s))
-                .setUnchangedName(plugin.getLangFile().get(player, s))
                 .setLore(plugin.getLangFile().getStringList(player, s2))
-                .hideTags()
-                .update();
+                .hideTags();
 
         getPage().pageSetItem(slot, openBuilder, player.getName().toLowerCase() + s3, event -> {
             Shop shop = plugin.getShopsManager().getShop(player.getUniqueId());
             if (shop != null) {
-                shop.setShopState(((Player) event.getWhoClicked()), b ? ShopState.OPEN : ShopState.CLOSED);
-                BkShop.getInstance().getMenuManager().openMainMenu((Player) event.getWhoClicked());
+                if (b)
+                    MenuSound.SUCCESS.play(event.getWhoClicked());
+                else
+                    MenuSound.WARN.play(event.getWhoClicked());
+                shop.setShopState(b ? ShopState.OPEN : ShopState.CLOSED);
+                me.bkrmt.bkshop.api.MainMenu mainMenu = new MainMenu((Player) event.getWhoClicked());
+                mainMenu.openMenu();
+                mainMenu.getPage().displayItemMessage(event.getSlot(), 1.5, b ? ChatColor.GREEN : ChatColor.YELLOW, BkShop.getInstance().getLangFile().get(shop.getOwner(), "info.shop-" + (b ? "open" : "closed")), null);
             } else {
-                event.getWhoClicked().closeInventory();
-                event.getWhoClicked().sendMessage(plugin.getLangFile().get(player, "error.create-shop-first"));
+                MenuSound.ERROR.play(event.getWhoClicked());
+                page.displayItemMessage(slot, 1.5, ChatColor.RED, plugin.getLangFile().get(player, "error.create-shop-first"), null);
             }
         });
     }
 
-    protected void openMenu() {
+    @Override
+    public void openMenu() {
         Shop shop = plugin.getShopsManager().getShop(player.getUniqueId());
 
         String color = "7";
@@ -86,11 +94,12 @@ public class MainMenu {
             color = shop.getColor();
         }
 
-        String headName = "§" + color + "§l" + player.getName();
-        ItemBuilder headBuilder = new ItemBuilder(plugin.createHead(player.getUniqueId(), headName, new ArrayList<>()))
-                .setUnchangedName(headName);
+        String headName = ChatColor.COLOR_CHAR + color + ChatColor.COLOR_CHAR + "l" + player.getName();
+        ItemBuilder headBuilder = new ItemBuilder(plugin.createHead(player.getUniqueId(), headName, new ArrayList<>()));
 
-        getPage().pageSetItem(20, headBuilder, player.getName().toLowerCase() + "-main-menu-head", event -> {});
+        getPage().pageSetItem(20, headBuilder, player.getName().toLowerCase() + "-main-menu-head", event -> {
+            MenuSound.SPECIAL.play(event.getWhoClicked());
+        });
 
         List<String> visitLore = new ArrayList<>();
         List<String> infoLore = new ArrayList<>();
@@ -112,35 +121,45 @@ public class MainMenu {
             infoLore.add(ChatColor.GRAY + ChatColor.stripColor(plugin.getLangFile().get(player, "error.no-shop")));
             visitLore.add(ChatColor.GRAY + ChatColor.stripColor(plugin.getLangFile().get(player, "error.no-shop")));
         }
-        
-        page.pageSetItem(24, 
-            new ItemBuilder(Material.PAPER)
-                .setName(plugin.getLangFile().get(player, "gui-buttons.info.name"))
-                .setUnchangedName(plugin.getLangFile().get(player, "gui-buttons.info.name"))
-                .setLore(infoLore)
-                .hideTags()
-                .update(),
-            player.getName().toLowerCase() + "-main-menu-info",
-            event -> {}
+
+        page.pageSetItem(24,
+                new ItemBuilder(Material.PAPER)
+                        .setName(plugin.getLangFile().get(player, "gui-buttons.info.name"))
+                        .setLore(infoLore)
+                        .hideTags(),
+                player.getName().toLowerCase() + "-main-menu-info",
+                event -> {
+                    if (shop == null) {
+                        MenuSound.ERROR.play(event.getWhoClicked());
+                        page.displayItemMessage(24, 1.5, ChatColor.RED, plugin.getLangFile().get(player, "error.create-shop-first"), null);
+                    }
+                }
         );
 
         String visitColor = "a";
         if (shop != null && shop.isPublicData()) visitColor = "e";
-        
-        page.pageSetItem(40, 
-            new ItemBuilder(plugin.getHandler().getItemManager().getSign())
-                .setName(Utils.translateColor(plugin.getLangFile().get(player, "gui-buttons.visits.name", false).replace("{color}", visitColor)))
-                .setUnchangedName(Utils.translateColor(plugin.getLangFile().get(player, "gui-buttons.visits.name", false).replace("{color}", visitColor)))
-                .setLore(visitLore)
-                .hideTags()
-                .update(),
-            player.getName().toLowerCase() + "-main-menu-info",
-            event -> {
-                if (shop != null) {
-                    shop.setPublicData((Player) event.getWhoClicked(), !shop.isPublicData());
-                    BkShop.getInstance().getMenuManager().openMainMenu((Player) event.getWhoClicked());
+
+        page.pageSetItem(40,
+                new ItemBuilder(plugin.getHandler().getItemManager().getSign())
+                        .setName(Utils.translateColor(plugin.getLangFile().get(player, "gui-buttons.visits.name", false).replace("{color}", visitColor)))
+                        .setLore(visitLore)
+                        .hideTags(),
+                player.getName().toLowerCase() + "-main-menu-info",
+                event -> {
+                    if (shop != null) {
+                        shop.setPublicData(!shop.isPublicData());
+                        if (shop.isPublicData())
+                            MenuSound.SUCCESS.play(event.getWhoClicked());
+                        else
+                            MenuSound.WARN.play(event.getWhoClicked());
+                        me.bkrmt.bkshop.api.MainMenu mainMenu = new MainMenu((Player) event.getWhoClicked());
+                        mainMenu.openMenu();
+                        mainMenu.getPage().displayItemMessage(40, 1.5, shop.isPublicData() ? ChatColor.GREEN : ChatColor.YELLOW, BkShop.getInstance().getLangFile().get((Player) event.getWhoClicked(), "info.info-visit-" + (shop.isPublicData() ? "private" : "public") + "-message"), null);
+                    } else {
+                        MenuSound.ERROR.play(event.getWhoClicked());
+                        page.displayItemMessage(40, 1.5, ChatColor.RED, plugin.getLangFile().get(player, "error.create-shop-first"), null);
+                    }
                 }
-            }
         );
         buildFrame(page, player.getName() + "-main-menu-shops");
         page.openGui(player);

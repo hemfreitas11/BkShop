@@ -4,7 +4,7 @@ import me.bkrmt.bkcore.BkPlugin;
 import me.bkrmt.bkcore.Utils;
 import me.bkrmt.bkcore.command.Executor;
 import me.bkrmt.bkshop.BkShop;
-import me.bkrmt.bkshop.Shop;
+import me.bkrmt.bkshop.api.Shop;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

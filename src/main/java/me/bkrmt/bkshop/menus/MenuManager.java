@@ -3,10 +3,11 @@ package me.bkrmt.bkshop.menus;
 import me.bkrmt.bkcore.PagedItem;
 import me.bkrmt.bkcore.PagedList;
 import me.bkrmt.bkshop.BkShop;
-import me.bkrmt.bkshop.Shop;
-import me.bkrmt.opengui.ItemBuilder;
-import me.bkrmt.opengui.Page;
-import me.bkrmt.opengui.Rows;
+import me.bkrmt.bkshop.api.Shop;
+import me.bkrmt.opengui.MenuSound;
+import me.bkrmt.opengui.gui.Rows;
+import me.bkrmt.opengui.item.ItemBuilder;
+import me.bkrmt.opengui.page.Page;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,12 +18,9 @@ import java.util.List;
 import static me.bkrmt.bkshop.BkShop.getInstance;
 import static me.bkrmt.bkshop.BkShop.plugin;
 
-public class MenuManager {
+public class MenuManager implements me.bkrmt.bkshop.api.MenuManager {
 
-    public void openMainMenu(Player player) {
-        new MainMenu(player).openMenu();
-    }
-
+    @Override
     public void openShopsMenu(Player player, int page) {
         ArrayDeque<PagedItem> shops = new ArrayDeque<>();
         List<Shop> shopList = getInstance().getShopsManager().getShops();
@@ -45,12 +43,13 @@ public class MenuManager {
             pagedList.getPages().get(0).setItemOnXY(1, 3,
                 new ItemBuilder(plugin.getHandler().getItemManager().getRedWool())
                     .setName(plugin.getLangFile().get(player, "gui-buttons.previous-page.name"))
-                    .setUnchangedName(plugin.getLangFile().get(player, "gui-buttons.previous-page.name"))
                     .setLore(plugin.getLangFile().getStringList("gui-buttons.return.description"))
-                    .hideTags()
-                    .update(),
+                    .hideTags(),
                 player.getName().toLowerCase() + "-shops-list-back-button",
-                event -> BkShop.getInstance().getMenuManager().openMainMenu(player));
+                event -> {
+                    MenuSound.BACK.play(event.getWhoClicked());
+                    new MainMenu(player).openMenu();
+                });
 
         if (page - 1 < pagedList.getPages().size()) {
             pagedList.getPages().get(page).openGui(player);
@@ -59,6 +58,7 @@ public class MenuManager {
         }
     }
 
+    @Override
     public void buildPageFrame(Page tempPage) {
         ItemStack[] items = BkShop.getInstance().getFrameItems();
         for (int c = 0; c < 45; c++) {
