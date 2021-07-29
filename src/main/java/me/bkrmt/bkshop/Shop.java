@@ -239,7 +239,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     private void beginTeleport(Player player) {
         new Teleport(BkShop.getInstance(), player, BkShop.getInstance().getConfigManager().getConfig().getBoolean("teleport-countdown.cancel-on-move"))
                 .setLocation(getOwnerName(), getLocation())
-                .setTitle(Utils.translateColor("&" + getColor() + BkShop.getInstance().getLangFile().get(owner, "info.warped.title").replace("{player}", player.getName())))
+                .setTitle(Utils.translateColor("&" + getColor() + BkShop.getInstance().getLangFile().get(owner, "info.warped.title").replace("{player}", getOwnerName() == null ? "N/A" : getOwnerName())))
                 .setSubtitle(Utils.translateColor("&" + getColor() + (description != null && !description.isEmpty() ? description : "")))
                 .setDuration(Utils.intFromPermission(player, "bkshop.countdown", new String[]{"bkshop.countdown.0"}))
                 .setIsCancellable(true)
