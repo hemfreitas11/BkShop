@@ -182,7 +182,7 @@ public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
     public Shop createShop(UUID uuid) {
         File shopFile = BkShop.getInstance().getFile("shops", uuid + ".yml");
         if (!shopFile.exists()) {
-            Configuration newShopConfig = new Configuration(BkShop.getInstance(), shopFile, ConfigType.Player_Data);
+            Configuration newShopConfig = new Configuration(BkShop.getInstance(), shopFile, ConfigType.PLAYER_DATA);
             BkShop.getInstance().getConfigManager().addConfig(newShopConfig);
             Shop newShop = new me.bkrmt.bkshop.Shop(Bukkit.getOfflinePlayer(uuid));
             shops.add(newShop);

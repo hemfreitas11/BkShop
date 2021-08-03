@@ -4,8 +4,8 @@ package me.bkrmt.bkshop;
 import me.bkrmt.bkcore.BkPlugin;
 
 public enum InternalMessages {
-    LOADING_SHOPS("§7[§1BkShop§7] §bLoading shops...",
-    "§7[§1BkLoja§7] §bCarregando lojas..."),
+    LOADING_SHOPS("§7[§1BkShop§7] §bLoading shops, please wait...",
+    "§7[§1BkLoja§7] §bCarregando lojas, por favor aguarde..."),
     OWN_PLUGINS_FOUND("§7[§1BkShop§7] §bOne or more of my plugins found, enabling support...",
     "§7[§1BkLoja§7] §bUm ou mais dos meus plugins encontrados, habilitando suporte..."),
     PLUGIN_STARTING("§7[§1BkShop§7] §bPlugin starting...",

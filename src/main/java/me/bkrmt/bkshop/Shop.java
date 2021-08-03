@@ -241,7 +241,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
                 .setLocation(getOwnerName(), getLocation())
                 .setTitle(Utils.translateColor("&" + getColor() + BkShop.getInstance().getLangFile().get(owner, "info.warped.title").replace("{player}", getOwnerName() == null ? "N/A" : getOwnerName())))
                 .setSubtitle(Utils.translateColor("&" + getColor() + (description != null && !description.isEmpty() ? description : "")))
-                .setDuration(Utils.intFromPermission(player, "bkshop.countdown", new String[]{"bkshop.countdown.0"}))
+                .setDuration(Utils.intFromPermission(player, 5, "bkshop.countdown", new String[]{"bkshop.countdown.0"}))
                 .setIsCancellable(true)
                 .startTeleport();
     }
@@ -249,6 +249,16 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     @Override
     public String getDisplayName(PagedList list, Page currentPage) {
         return displayName;
+    }
+
+    @Override
+    public int getSlot() {
+        return -1;
+    }
+
+    @Override
+    public int getPage() {
+        return -1;
     }
 
     @Override
@@ -394,6 +404,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
 
     @Override
     public int compareTo(me.bkrmt.bkshop.api.Shop shop) {
+        if (shop.getOwnerName() == null) return 1;
         if (shop.getOwnerName().equals(getOwnerName())) return 0;
         else return 1;
     }

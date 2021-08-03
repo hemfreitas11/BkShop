@@ -113,6 +113,7 @@ public final class BkShop extends BkPlugin {
 
         frameType = getConfigManager().getConfig().getInt("frame");
         sendConsoleMessage(InternalMessages.LOADING_SHOPS.getMessage(this));
+        getConfigManager().loadAllConfigs();
         shopsManager = new me.bkrmt.bkshop.ShopsManager();
         menuManager = new me.bkrmt.bkshop.menus.MenuManager();
 

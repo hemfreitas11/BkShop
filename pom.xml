@@ -6,10 +6,10 @@
 
     <groupId>me.bkrmt</groupId>
     <artifactId>bkshop</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <packaging>jar</packaging>
 
-    <name>bkshop</name>
+    <name>BkShop</name>
 
     <description>Setshop plugin</description>
     <properties>
@@ -119,6 +119,38 @@
         </dependency>
 
         <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.9</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>me.bkrmt.bkcore</groupId>
+            <artifactId>teleport</artifactId>
+            <version>1.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.bkrmt</groupId>
+            <artifactId>opengui</artifactId>
+            <version>1.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.bkrmt.bkcore</groupId>
+            <artifactId>pagedlist</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.bkrmt.bkcore</groupId>
+            <artifactId>textanimator</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>me.bkrmt</groupId>
             <artifactId>v1_8_R1</artifactId>
             <version>v1_8_R1</version>
@@ -161,33 +193,10 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>me.bkrmt.bkcore</groupId>
-            <artifactId>teleport</artifactId>
-            <version>1.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>me.bkrmt</groupId>
-            <artifactId>opengui</artifactId>
-            <version>1.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.bkrmt.bkcore</groupId>
-            <artifactId>pagedlist</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.9</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.bkrmt.bkcore</groupId>
-            <artifactId>textanimator</artifactId>
-            <version>1.0</version>
+            <artifactId>v1_16_R1</artifactId>
+            <version>v1_16_R1</version>
+            <type>jar</type>
             <scope>compile</scope>
         </dependency>
     </dependencies>
