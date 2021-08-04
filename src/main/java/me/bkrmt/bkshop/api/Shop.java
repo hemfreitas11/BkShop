@@ -8,7 +8,6 @@ import me.bkrmt.opengui.page.Page;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -57,7 +56,7 @@ public interface Shop extends PagedItem, Comparable<Shop> {
 
     List<String> getLore(PagedList list, Page currentPage);
 
-    ItemStack getDisplayItem(PagedList list, Page currentPage);
+    Object getDisplayItem(PagedList list, Page currentPage);
 
     ElementResponse getElementResponse(PagedList list, Page currentPage);
 

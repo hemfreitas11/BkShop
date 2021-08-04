@@ -120,6 +120,9 @@ gui-buttons:
 # Here you can change all the messages in the plugin
 # *-----------------*=/[Info Messages]\=*---------------*
 info:
+  permission-check:
+    shop-closed: '&c&lYou lost your shop permission and your shop has been closed.'
+    shop-deleted: '&c&lYou lost your shop permission and your shop has been deleted.'
   configs-reloaded: '&aAll the configs and messages have been reloaded!'
   message-set: '&aMessage set to {message}&a.'
   color-set: '&aColor changed to &{color}{color}&a.'

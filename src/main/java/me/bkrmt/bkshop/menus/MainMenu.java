@@ -70,14 +70,19 @@ public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
         getPage().pageSetItem(slot, openBuilder, player.getName().toLowerCase() + s3, event -> {
             Shop shop = plugin.getShopsManager().getShop(player.getUniqueId());
             if (shop != null) {
-                if (b)
-                    MenuSound.SUCCESS.play(event.getWhoClicked());
-                else
-                    MenuSound.WARN.play(event.getWhoClicked());
-                shop.setShopState(b ? ShopState.OPEN : ShopState.CLOSED);
-                me.bkrmt.bkshop.api.MainMenu mainMenu = new MainMenu((Player) event.getWhoClicked());
-                mainMenu.openMenu();
-                mainMenu.getPage().displayItemMessage(event.getSlot(), 1.5, b ? ChatColor.GREEN : ChatColor.YELLOW, BkShop.getInstance().getLangFile().get(shop.getOwner(), "info.shop-" + (b ? "open" : "closed")), null);
+                if (event.getWhoClicked().hasPermission("bkshop.setshop")) {
+                    if (b)
+                        MenuSound.SUCCESS.play(event.getWhoClicked());
+                    else
+                        MenuSound.WARN.play(event.getWhoClicked());
+                    shop.setShopState(b ? ShopState.OPEN : ShopState.CLOSED);
+                    me.bkrmt.bkshop.api.MainMenu mainMenu = new MainMenu((Player) event.getWhoClicked());
+                    mainMenu.openMenu();
+                    mainMenu.getPage().displayItemMessage(event.getSlot(), 1.5, b ? ChatColor.GREEN : ChatColor.YELLOW, BkShop.getInstance().getLangFile().get(shop.getOwner(), "info.shop-" + (b ? "open" : "closed")), null);
+                } else {
+                    MenuSound.ERROR.play(event.getWhoClicked());
+                    page.displayItemMessage(slot, 1.5, ChatColor.RED, plugin.getLangFile().get(player, "error.no-permission"), null);
+                }
             } else {
                 MenuSound.ERROR.play(event.getWhoClicked());
                 page.displayItemMessage(slot, 1.5, ChatColor.RED, plugin.getLangFile().get(player, "error.create-shop-first"), null);
@@ -95,9 +100,8 @@ public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
         }
 
         String headName = ChatColor.COLOR_CHAR + color + ChatColor.COLOR_CHAR + "l" + player.getName();
-        ItemBuilder headBuilder = new ItemBuilder(plugin.createHead(player.getUniqueId(), headName, new ArrayList<>()));
 
-        getPage().pageSetItem(20, headBuilder, player.getName().toLowerCase() + "-main-menu-head", event -> {
+        getPage().pageSetHead(20, player, headName, new ArrayList<>(), player.getName().toLowerCase() + "-main-menu-head", event -> {
             MenuSound.SPECIAL.play(event.getWhoClicked());
         });
 

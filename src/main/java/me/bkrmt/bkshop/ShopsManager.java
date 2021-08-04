@@ -8,6 +8,7 @@ import me.bkrmt.bkshop.api.ShopState;
 import me.bkrmt.bkshop.api.events.PlayerDelShopEvent;
 import me.bkrmt.bkshop.api.events.PlayerSetShopEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,6 +30,10 @@ public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
     public ShopsManager() {
         toBeConverted = new ConcurrentSet<>();
         shops = new ArrayList<>();
+
+        boolean closeShop = BkShop.getInstance().getConfigManager().getConfig().getBoolean("permission-check.close-shop");
+        boolean deleteShop = !closeShop && BkShop.getInstance().getConfigManager().getConfig().getBoolean("permission-check.delete-shop");
+
         File[] shopFiles = BkShop.getInstance().getFile("shops", "").listFiles();
         if (shopFiles.length > 0) {
             for (File shopFile : shopFiles) {
@@ -46,11 +51,19 @@ public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
             }
         }
 
+        for (Shop shop : shops) {
+            OfflinePlayer offlinePlayer = shop.getOwner();
+            if (offlinePlayer != null && offlinePlayer.getPlayer() != null)
+                checkOwnerPermission(offlinePlayer.getPlayer(), shop, closeShop, deleteShop);
+        }
+
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onJoin(PlayerJoinEvent event) {
+                final boolean closeShop = BkShop.getInstance().getConfigManager().getConfig().getBoolean("permission-check.close-shop");
+                final boolean deleteShop = !closeShop && BkShop.getInstance().getConfigManager().getConfig().getBoolean("permission-check.delete-shop");
+                Player player = event.getPlayer();
                 if (toBeConverted.size() > 0) {
-                    Player player = event.getPlayer();
                     for (File shopFile : toBeConverted) {
                         String cleanName = shopFile.getName().replace(".yml", "");
                         if (player.getName().equalsIgnoreCase(cleanName)) {
@@ -58,8 +71,26 @@ public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
                         }
                     }
                 }
+
+                Shop shop = getShop(player.getUniqueId());
+                checkOwnerPermission(player, shop, closeShop, deleteShop);
             }
         }, BkShop.getInstance());
+    }
+
+    private void checkOwnerPermission(Player player, Shop shop, boolean closeShop, boolean deleteShop) {
+        if (shop != null) {
+            if (!player.hasPermission("bkshop.setshop")) {
+                BkShop bkShop = BkShop.getInstance();
+                if (closeShop) {
+                    shop.setShopState(ShopState.CLOSED);
+                    player.sendMessage(bkShop.getLangFile().get("info.permission-check.shop-closed"));
+                } else if (deleteShop) {
+                    delete(null, shop);
+                    player.sendMessage(bkShop.getLangFile().get("info.permission-check.shop-deleted"));
+                }
+            }
+        }
     }
 
     private boolean verifyShop(File shopFile) {

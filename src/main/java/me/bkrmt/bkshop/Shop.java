@@ -1,5 +1,6 @@
 package me.bkrmt.bkshop;
 
+import me.bkrmt.bkcore.HeadDisplay;
 import me.bkrmt.bkcore.PagedList;
 import me.bkrmt.bkcore.Utils;
 import me.bkrmt.bkcore.config.Configuration;
@@ -13,7 +14,6 @@ import me.bkrmt.opengui.page.Page;
 import me.bkrmt.teleport.Teleport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,6 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     private Location location;
     private boolean publicData;
     private ShopState shopState;
-    private final ItemBuilder displayItem;
 
     public Shop(OfflinePlayer owner) {
         this.owner = owner;
@@ -65,7 +64,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
 
         reloadDisplayItem();
 
-        this.displayItem = new ItemBuilder(BkShop.getInstance().createHead(owner.getUniqueId(), displayName, lore));
+//        this.displayItem = new ItemBuilder(BkShop.getInstance().getCustomTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDVjNmRjMmJiZjUxYzM2Y2ZjNzcxNDU4NWE2YTU2ODNlZjJiMTRkNDdkOGZmNzE0NjU0YTg5M2Y1ZGE2MjIifX19"));
         if (!shopConfig.getFile().exists()) shopConfig.saveToFile();
     }
 
@@ -88,8 +87,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
         this.location = shopConfig.getLocation("shop");
 
         reloadDisplayItem();
-
-        this.displayItem = new ItemBuilder(BkShop.getInstance().createHead(Bukkit.getOfflinePlayer(ownerName).getUniqueId(), displayName, lore));
+//        this.displayItem = new ItemBuilder(BkShop.getInstance().getCustomTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDVjNmRjMmJiZjUxYzM2Y2ZjNzcxNDU4NWE2YTU2ODNlZjJiMTRkNDdkOGZmNzE0NjU0YTg5M2Y1ZGE2MjIifX19"));
         if (!shopConfig.getFile().exists()) shopConfig.saveToFile();
     }
 
@@ -267,8 +265,8 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     }
 
     @Override
-    public ItemStack getDisplayItem(PagedList list, Page currentPage) {
-        return displayItem.getItem();
+    public Object getDisplayItem(PagedList list, Page currentPage) {
+        return new HeadDisplay(owner == null ? Bukkit.getOfflinePlayer("Steve") : owner, displayName, lore);
     }
 
     @Override
@@ -350,9 +348,14 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
                 .hideTags();
 
         page.setItemOnXY(4, 3, closeBuilder, shopUser.getName().toLowerCase() + "-shop-options-close", event -> {
-            MenuSound.WARN.play(event.getWhoClicked());
-            setShopState(ShopState.CLOSED);
-            page.displayItemMessage(event.getSlot(), 1.5, ChatColor.YELLOW, BkShop.getInstance().getLangFile().get(shopUser, "info.shop-closed"), null);
+            if (event.getWhoClicked().hasPermission("bkshop.setshop")) {
+                MenuSound.WARN.play(event.getWhoClicked());
+                setShopState(ShopState.CLOSED);
+                page.displayItemMessage(event.getSlot(), 1.5, ChatColor.YELLOW, BkShop.getInstance().getLangFile().get(shopUser, "info.shop-closed"), null);
+            } else {
+                MenuSound.ERROR.play(event.getWhoClicked());
+                page.displayItemMessage(event.getSlot(), 1.5, ChatColor.RED, plugin.getLangFile().get((OfflinePlayer) event.getWhoClicked(), "error.no-permission"), null);
+            }
         });
 
         ItemBuilder openBuilder = new ItemBuilder(plugin.getHandler().getItemManager().getGreenPane())
@@ -360,9 +363,14 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
                 .hideTags();
 
         page.setItemOnXY(6, 3, openBuilder, shopUser.getName().toLowerCase() + "-shop-options-open", event -> {
-            MenuSound.SUCCESS.play(event.getWhoClicked());
-            setShopState(ShopState.OPEN);
-            page.displayItemMessage(event.getSlot(), 1.5, ChatColor.GREEN, BkShop.getInstance().getLangFile().get(shopUser, "info.shop-open"), null);
+            if (event.getWhoClicked().hasPermission("bkshop.setshop")) {
+                MenuSound.SUCCESS.play(event.getWhoClicked());
+                setShopState(ShopState.OPEN);
+                page.displayItemMessage(event.getSlot(), 1.5, ChatColor.GREEN, BkShop.getInstance().getLangFile().get(shopUser, "info.shop-open"), null);
+            } else {
+                MenuSound.ERROR.play(event.getWhoClicked());
+                page.displayItemMessage(event.getSlot(), 1.5, ChatColor.RED, plugin.getLangFile().get((OfflinePlayer) event.getWhoClicked(), "error.no-permission"), null);
+            }
         });
 
         ItemBuilder deleteBuilder = new ItemBuilder(Material.TNT)

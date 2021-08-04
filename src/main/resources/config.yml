@@ -22,6 +22,13 @@ max-message-length: 60
 # The amount of time in seconds that the player will be invulnerable to damage after a teleport
 invulnerable-time: 0
 
+# When the plugin starts or a shop owner enters the game, the plugin will check if he still has the setshop permission.
+# If he doesn't have the permission anymore, the plugin can either close or delete the shop. You can configure this bellow:
+permission-check:
+  close-shop: true
+  # Set 'close-shop' to false to use this option
+  delete-shop: false
+
 # Teleport countdown options
 teleport-countdown:
   # When true the plugin will make a pling sound every second of the countdown
