@@ -8,7 +8,6 @@ import me.bkrmt.bkshop.api.ShopState;
 import me.bkrmt.bkshop.api.events.PlayerDelShopEvent;
 import me.bkrmt.bkshop.api.events.PlayerSetShopEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,20 +18,16 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
 import java.lang.reflect.MalformedParametersException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
-    private final List<Shop> shops;
+    private final ConcurrentSkipListSet<Shop> shops;
     private final ConcurrentSet<File> toBeConverted;
 
     public ShopsManager() {
         toBeConverted = new ConcurrentSet<>();
-        shops = new ArrayList<>();
-
-        boolean closeShop = BkShop.getInstance().getConfigManager().getConfig().getBoolean("permission-check.close-shop");
-        boolean deleteShop = !closeShop && BkShop.getInstance().getConfigManager().getConfig().getBoolean("permission-check.delete-shop");
+        shops = new ConcurrentSkipListSet<>();
 
         File[] shopFiles = BkShop.getInstance().getFile("shops", "").listFiles();
         if (shopFiles.length > 0) {
@@ -49,12 +44,6 @@ public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
                     }
                 }
             }
-        }
-
-        for (Shop shop : shops) {
-            OfflinePlayer offlinePlayer = shop.getOwner();
-            if (offlinePlayer != null && offlinePlayer.getPlayer() != null)
-                checkOwnerPermission(offlinePlayer.getPlayer(), shop, closeShop, deleteShop);
         }
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -173,7 +162,7 @@ public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
     }
 
     @Override
-    public List<Shop> getShops() {
+    public ConcurrentSkipListSet<Shop> getShops() {
         return shops;
     }
 
@@ -233,19 +222,24 @@ public class ShopsManager implements me.bkrmt.bkshop.api.ShopsManager {
 
     private void delete(CommandSender sender, Shop shop) {
         BkShop plugin = BkShop.getInstance();
-        if (shop == null || !shop.getConfig().getFile().exists()) {
+        if (shop == null) {
             if (sender != null)
                 sender.sendMessage(plugin.getLangFile().get(((Player) sender), "error.no-shop"));
         } else {
-            PlayerDelShopEvent delShopEvent = new PlayerDelShopEvent((Player) sender, shop);
-            plugin.getServer().getPluginManager().callEvent(delShopEvent);
-            if (!delShopEvent.isCancelled()) {
-                if (shop.getConfig().getFile().delete()) {
-                    plugin.getConfigManager().removeConfig("shops", shop.getOwnerName().toLowerCase() + ".yml");
-                    shops.remove(shop);
-                    if (sender != null)
-                        sender.sendMessage(plugin.getLangFile().get(((Player) sender), "info.shop-deleted"));
+            if (shop.getConfig() != null && shop.getConfig().getFile().exists()) {
+                PlayerDelShopEvent delShopEvent = new PlayerDelShopEvent((Player) sender, shop);
+                plugin.getServer().getPluginManager().callEvent(delShopEvent);
+                if (!delShopEvent.isCancelled()) {
+                    if (shop.getConfig().getFile().delete()) {
+                        plugin.getConfigManager().removeConfig("shops", shop.getOwnerName().toLowerCase() + ".yml");
+                        shops.remove(shop);
+                        if (sender != null)
+                            sender.sendMessage(plugin.getLangFile().get(((Player) sender), "info.shop-deleted"));
+                    }
                 }
+            } else {
+                if (sender != null)
+                    sender.sendMessage(plugin.getLangFile().get(((Player) sender), "error.no-shop"));
             }
         }
     }

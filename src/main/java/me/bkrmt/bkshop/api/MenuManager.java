@@ -1,6 +1,6 @@
 package me.bkrmt.bkshop.api;
 
-import me.bkrmt.opengui.page.Page;
+import me.bkrmt.bkcore.bkgui.page.Page;
 import org.bukkit.entity.Player;
 
 public interface MenuManager {

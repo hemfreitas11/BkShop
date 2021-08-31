@@ -1,6 +1,7 @@
 package me.bkrmt.bkshop;
 
 import me.bkrmt.bkcore.BkPlugin;
+import me.bkrmt.bkcore.bkgui.BkGUI;
 import me.bkrmt.bkcore.command.CommandModule;
 import me.bkrmt.bkcore.command.HelpCmd;
 import me.bkrmt.bkcore.command.ReloadCmd;
@@ -11,7 +12,6 @@ import me.bkrmt.bkshop.commands.DelShopCmd;
 import me.bkrmt.bkshop.commands.SetShop;
 import me.bkrmt.bkshop.commands.ShopCmd;
 import me.bkrmt.bkshop.commands.ShopsCmd;
-import me.bkrmt.opengui.OpenGUI;
 import me.bkrmt.teleport.TeleportCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,7 +22,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +37,7 @@ public final class BkShop extends BkPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        OpenGUI.INSTANCE.register(this);
+        BkGUI.INSTANCE.register(this);
         animatorManager = new AnimatorManager(this);
         start(true);
         setRunning(true);
@@ -58,8 +57,8 @@ public final class BkShop extends BkPlugin {
         if (!shopsFolder.exists()) {
             if (!shopsFolder.mkdir()) {
                 try {
-                    throw new IOException("The plugin was not started because the folder \"shops\" could not be created.");
-                } catch (IOException e) {
+                    throw new RuntimeException("The plugin was not started because the folder \"shops\" could not be created.");
+                } catch (RuntimeException e) {
                     e.printStackTrace();
                     Bukkit.getServer().getPluginManager().disablePlugin(this);
                     return;
@@ -113,7 +112,7 @@ public final class BkShop extends BkPlugin {
 
         frameType = getConfigManager().getConfig().getInt("frame");
         sendConsoleMessage(InternalMessages.LOADING_SHOPS.getMessage(this));
-        getConfigManager().loadAllConfigs(this);
+        getConfigManager().loadAllConfigs();
         shopsManager = new me.bkrmt.bkshop.ShopsManager();
         menuManager = new me.bkrmt.bkshop.menus.MenuManager();
 

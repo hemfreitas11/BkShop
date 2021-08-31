@@ -2,28 +2,27 @@ package me.bkrmt.bkshop.menus;
 
 import me.bkrmt.bkcore.PagedItem;
 import me.bkrmt.bkcore.PagedList;
+import me.bkrmt.bkcore.bkgui.MenuSound;
+import me.bkrmt.bkcore.bkgui.gui.Rows;
+import me.bkrmt.bkcore.bkgui.item.ItemBuilder;
+import me.bkrmt.bkcore.bkgui.page.Page;
 import me.bkrmt.bkshop.BkShop;
 import me.bkrmt.bkshop.api.Shop;
-import me.bkrmt.opengui.MenuSound;
-import me.bkrmt.opengui.gui.Rows;
-import me.bkrmt.opengui.item.ItemBuilder;
-import me.bkrmt.opengui.page.Page;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
-import java.util.List;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import static me.bkrmt.bkshop.BkShop.getInstance;
 import static me.bkrmt.bkshop.BkShop.plugin;
 
 public class MenuManager implements me.bkrmt.bkshop.api.MenuManager {
-
     @Override
     public void openShopsMenu(Player player, int page) {
         ArrayDeque<PagedItem> shops = new ArrayDeque<>();
-        List<Shop> shopList = getInstance().getShopsManager().getShops();
+        ConcurrentSkipListSet<Shop> shopList = getInstance().getShopsManager().getShops();
         shopList.forEach(Shop::reloadDisplayItem);
         Collections.addAll(shops, shopList.toArray(new Shop[0]));
 
@@ -33,7 +32,7 @@ public class MenuManager implements me.bkrmt.bkshop.api.MenuManager {
                 .setStartingSlot(11)
                 .setListRowSize(5)
                 .setButtonSlots(18, 26)
-                .setMenuTitle(BkShop.getInstance().getLangFile().get(null, "info.list-title"))
+                .setGuiTitle(BkShop.getInstance().getLangFile().get(null, "info.list-title"))
                 .buildMenu();
         for (Page tempPage : pagedList.getPages()) {
             buildPageFrame(tempPage);

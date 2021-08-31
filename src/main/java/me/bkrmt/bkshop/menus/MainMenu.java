@@ -1,26 +1,28 @@
 package me.bkrmt.bkshop.menus;
 
 import me.bkrmt.bkcore.Utils;
+import me.bkrmt.bkcore.bkgui.MenuSound;
+import me.bkrmt.bkcore.bkgui.gui.GUI;
+import me.bkrmt.bkcore.bkgui.gui.Rows;
+import me.bkrmt.bkcore.bkgui.item.ItemBuilder;
+import me.bkrmt.bkcore.bkgui.page.Page;
 import me.bkrmt.bkshop.BkShop;
 import me.bkrmt.bkshop.api.Shop;
 import me.bkrmt.bkshop.api.ShopState;
-import me.bkrmt.opengui.MenuSound;
-import me.bkrmt.opengui.gui.GUI;
-import me.bkrmt.opengui.gui.Rows;
-import me.bkrmt.opengui.item.ItemBuilder;
-import me.bkrmt.opengui.page.Page;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
     private final Page page;
     private final BkShop plugin;
     private final Player player;
+    private int i = 1;
 
     public MainMenu(Player player) {
         this.player = player;
@@ -94,16 +96,7 @@ public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
     public void openMenu() {
         Shop shop = plugin.getShopsManager().getShop(player.getUniqueId());
 
-        String color = "7";
-        if (shop != null) {
-            color = shop.getColor();
-        }
-
-        String headName = ChatColor.COLOR_CHAR + color + ChatColor.COLOR_CHAR + "l" + player.getName();
-
-        getPage().pageSetHead(20, player, headName, new ArrayList<>(), player.getName().toLowerCase() + "-main-menu-head", event -> {
-            MenuSound.SPECIAL.play(event.getWhoClicked());
-        });
+        setMainHead(shop, true);
 
         List<String> visitLore = new ArrayList<>();
         List<String> infoLore = new ArrayList<>();
@@ -167,6 +160,29 @@ public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
         );
         buildFrame(page, player.getName() + "-main-menu-shops");
         page.openGui(player);
+    }
+
+    private void setMainHead(Shop shop, boolean b) {
+        String color = "7";
+        if (shop != null) {
+            color = shop.getColor();
+        }
+
+        String headName = b ? ChatColor.COLOR_CHAR + color + ChatColor.COLOR_CHAR + "l" + player.getName() :
+            BkShop.getInstance().getLangFile().getLanguage().equals("pt_BR") ? "§6§lFeito por Bkr__" : "§6§lMade by Bkr__";
+
+        getPage().pageSetHead(20, player, headName, b ? new ArrayList<>() : Collections.singletonList("§eBkShop v"+BkShop.getInstance().getDescription().getVersion()), player.getName().toLowerCase() + "-main-menu-head", event -> {
+            MenuSound.SPECIAL.play(event.getWhoClicked());
+            if (i == 6) {
+                i = 0;
+                setMainHead(shop, false);
+                return;
+            } else if (i == 0) {
+                setMainHead(shop, true);
+            }
+            i++;
+        });
+
     }
 
     private void buildFrame(Page page, String identifier) {

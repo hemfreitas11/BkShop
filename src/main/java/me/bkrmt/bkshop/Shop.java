@@ -3,14 +3,14 @@ package me.bkrmt.bkshop;
 import me.bkrmt.bkcore.HeadDisplay;
 import me.bkrmt.bkcore.PagedList;
 import me.bkrmt.bkcore.Utils;
+import me.bkrmt.bkcore.bkgui.MenuSound;
+import me.bkrmt.bkcore.bkgui.event.ElementResponse;
+import me.bkrmt.bkcore.bkgui.gui.GUI;
+import me.bkrmt.bkcore.bkgui.gui.Rows;
+import me.bkrmt.bkcore.bkgui.item.ItemBuilder;
+import me.bkrmt.bkcore.bkgui.page.Page;
 import me.bkrmt.bkcore.config.Configuration;
 import me.bkrmt.bkshop.api.ShopState;
-import me.bkrmt.opengui.MenuSound;
-import me.bkrmt.opengui.event.ElementResponse;
-import me.bkrmt.opengui.gui.GUI;
-import me.bkrmt.opengui.gui.Rows;
-import me.bkrmt.opengui.item.ItemBuilder;
-import me.bkrmt.opengui.page.Page;
 import me.bkrmt.teleport.Teleport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -258,6 +258,12 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     public int getPage() {
         return -1;
     }
+
+    @Override
+    public void setPage(int slot) {}
+
+    @Override
+    public void setSlot(int slot) {}
 
     @Override
     public List<String> getLore(PagedList list, Page currentPage) {

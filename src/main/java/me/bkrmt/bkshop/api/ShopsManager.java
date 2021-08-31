@@ -2,13 +2,13 @@ package me.bkrmt.bkshop.api;
 
 import org.bukkit.command.CommandSender;
 
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public interface ShopsManager {
     void setShop(CommandSender sender);
 
-    List<Shop> getShops();
+    ConcurrentSkipListSet<Shop> getShops();
 
     Shop getShop(UUID ownerUuid);
 

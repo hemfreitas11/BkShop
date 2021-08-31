@@ -2,9 +2,9 @@ package me.bkrmt.bkshop.api;
 
 import me.bkrmt.bkcore.PagedItem;
 import me.bkrmt.bkcore.PagedList;
+import me.bkrmt.bkcore.bkgui.event.ElementResponse;
+import me.bkrmt.bkcore.bkgui.page.Page;
 import me.bkrmt.bkcore.config.Configuration;
-import me.bkrmt.opengui.event.ElementResponse;
-import me.bkrmt.opengui.page.Page;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
