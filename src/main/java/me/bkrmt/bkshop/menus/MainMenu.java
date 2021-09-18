@@ -6,11 +6,11 @@ import me.bkrmt.bkcore.bkgui.gui.GUI;
 import me.bkrmt.bkcore.bkgui.gui.Rows;
 import me.bkrmt.bkcore.bkgui.item.ItemBuilder;
 import me.bkrmt.bkcore.bkgui.page.Page;
+import me.bkrmt.bkcore.xlibs.XMaterial;
 import me.bkrmt.bkshop.BkShop;
 import me.bkrmt.bkshop.api.Shop;
 import me.bkrmt.bkshop.api.ShopState;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -42,12 +42,11 @@ public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
     public Player getPlayer() {
         return player;
     }
-
     private void setStaticButtons() {
-        setOpenButtons(plugin.getHandler().getItemManager().getRedPane(), "gui-buttons.close.name", "gui-buttons.close.description", "-main-menu-close-shop", false, 30);
-        setOpenButtons(plugin.getHandler().getItemManager().getGreenPane(), "gui-buttons.open.name", "gui-buttons.open.description", "-main-menu-open-shop", true, 32);
+        setOpenButtons(XMaterial.RED_STAINED_GLASS_PANE.parseItem(), "gui-buttons.close.name", "gui-buttons.close.description", "-main-menu-close-shop", false, 30);
+        setOpenButtons(XMaterial.GREEN_STAINED_GLASS_PANE.parseItem(), "gui-buttons.open.name", "gui-buttons.open.description", "-main-menu-open-shop", true, 32);
 
-        ItemBuilder shopsMenu = new ItemBuilder(Material.EMERALD)
+        ItemBuilder shopsMenu = new ItemBuilder(XMaterial.EMERALD)
                 .setName(plugin.getLangFile().get(player, "gui-buttons.shops.name"))
                 .setLore(plugin.getLangFile().getStringList(player, "info.shops-desc"))
                 .hideTags();
@@ -120,7 +119,7 @@ public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
         }
 
         page.pageSetItem(24,
-                new ItemBuilder(Material.PAPER)
+                new ItemBuilder(XMaterial.PAPER)
                         .setName(plugin.getLangFile().get(player, "gui-buttons.info.name"))
                         .setLore(infoLore)
                         .hideTags(),
@@ -137,7 +136,7 @@ public class MainMenu implements me.bkrmt.bkshop.api.MainMenu {
         if (shop != null && shop.isPublicData()) visitColor = "e";
 
         page.pageSetItem(40,
-                new ItemBuilder(plugin.getHandler().getItemManager().getSign())
+                new ItemBuilder(XMaterial.OAK_SIGN)
                         .setName(Utils.translateColor(plugin.getLangFile().get(player, "gui-buttons.visits.name", false).replace("{color}", visitColor)))
                         .setLore(visitLore)
                         .hideTags(),

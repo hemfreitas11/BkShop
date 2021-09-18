@@ -10,9 +10,13 @@ import me.bkrmt.bkcore.bkgui.gui.Rows;
 import me.bkrmt.bkcore.bkgui.item.ItemBuilder;
 import me.bkrmt.bkcore.bkgui.page.Page;
 import me.bkrmt.bkcore.config.Configuration;
+import me.bkrmt.bkcore.xlibs.XMaterial;
 import me.bkrmt.bkshop.api.ShopState;
 import me.bkrmt.teleport.Teleport;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -57,6 +61,10 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
             if (owner.isOnline()) {
                 shopConfig.setLocation("shop", owner.getPlayer().getLocation());
                 this.location = owner.getPlayer().getLocation();
+            } else {
+                Location defaultLocation = getDefaultLocation();
+                shopConfig.setLocation("shop", defaultLocation);
+                this.location = defaultLocation;
             }
         } else {
             this.location = shopConfig.getLocation("shop");
@@ -148,7 +156,15 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
 
     @Override
     public Location getLocation() {
-        return location;
+        return location == null ? getDefaultLocation() : location;
+    }
+
+    private Location getDefaultLocation() {
+        BkShop.getInstance().sendConsoleMessage(
+            InternalMessages.INVALID_LOCATION.getMessage(BkShop.getInstance())
+                .replace("{0}", getConfig().getFile().getName())
+        );
+        return new Location(Bukkit.getWorld("world"), 0, 0, 0);
     }
 
     @Override
@@ -183,9 +199,11 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
 
     @Override
     public Shop setLocation(Location location) {
-        this.location = location;
-        getConfig().setLocation("shop", location);
-        getConfig().saveToFile();
+        if (location != null) {
+            this.location = location;
+            getConfig().setLocation("shop", location);
+            getConfig().saveToFile();
+        }
         return this;
     }
 
@@ -258,7 +276,27 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     public int getPage() {
         return -1;
     }
+///////
+    @Override
+    public void setIgnorePage(boolean ignorePage) {
 
+    }
+
+    @Override
+    public void setIgnoreSlot(boolean ignoreSlot) {
+
+    }
+
+    @Override
+    public boolean isIgnorePage() {
+        return false;
+    }
+
+    @Override
+    public boolean isIgnoreSlot() {
+        return false;
+    }
+//////////
     @Override
     public void setPage(int slot) {}
 
@@ -292,19 +330,29 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     }
 
     @Override
+    public void assignID(long id) {
+
+    }
+
+    @Override
+    public long getID() {
+        return 0;
+    }
+
+    @Override
     public void openDeleteMenu(Player player, int previousPage) {
         BkShop plugin = BkShop.getInstance();
 
         Page menu = new Page(plugin, plugin.getAnimatorManager(), new GUI(plugin.getLangFile().get(owner, "info.delete-confirm-title"), Rows.FIVE), 1);
 
-        ItemBuilder info = new ItemBuilder(plugin.getHandler().getItemManager().getSign())
+        ItemBuilder info = new ItemBuilder(XMaterial.OAK_SIGN)
                 .setName(plugin.getLangFile().get(player, "gui-buttons.delete-sign.name"))
                 .setLore(plugin.getLangFile().getStringList(player, "info.delete-sign-lore"));
 
-        ItemBuilder confirm = new ItemBuilder(Material.EMERALD_BLOCK)
+        ItemBuilder confirm = new ItemBuilder(XMaterial.EMERALD_BLOCK)
                 .setName(plugin.getLangFile().get(player, "gui-buttons.delete-confirm.name"));
 
-        ItemBuilder cancel = new ItemBuilder(Material.REDSTONE_BLOCK)
+        ItemBuilder cancel = new ItemBuilder(XMaterial.REDSTONE_BLOCK)
                 .setName(plugin.getLangFile().get(player, "gui-buttons.delete-decline.name"));
 
         menu.setItemOnXY(5, 2, info, "delete-menu-info-" + player.getName().toLowerCase() + "-info", event -> {
@@ -340,7 +388,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
         String customColor = "7";
         if (getColor() != null) customColor = getColor();
 
-        ItemBuilder teleportBuilder = new ItemBuilder(plugin.getHandler().getItemManager().getPearl())
+        ItemBuilder teleportBuilder = new ItemBuilder(XMaterial.ENDER_PEARL)
                 .setName(plugin.getLangFile().get(owner, "gui-buttons.admin-teleport.name"))
                 .hideTags();
 
@@ -349,7 +397,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
             teleportToShop(shopUser);
         });
 
-        ItemBuilder closeBuilder = new ItemBuilder(plugin.getHandler().getItemManager().getRedPane())
+        ItemBuilder closeBuilder = new ItemBuilder(XMaterial.RED_STAINED_GLASS_PANE)
                 .setName(plugin.getLangFile().get(owner, "gui-buttons.admin-close.name"))
                 .hideTags();
 
@@ -364,7 +412,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
             }
         });
 
-        ItemBuilder openBuilder = new ItemBuilder(plugin.getHandler().getItemManager().getGreenPane())
+        ItemBuilder openBuilder = new ItemBuilder(XMaterial.GREEN_STAINED_GLASS_PANE)
                 .setName(plugin.getLangFile().get(owner, "gui-buttons.admin-open.name"))
                 .hideTags();
 
@@ -379,7 +427,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
             }
         });
 
-        ItemBuilder deleteBuilder = new ItemBuilder(Material.TNT)
+        ItemBuilder deleteBuilder = new ItemBuilder(XMaterial.TNT)
                 .setName(plugin.getLangFile().get(owner, "gui-buttons.admin-delete.name"))
                 .hideTags();
 
@@ -391,7 +439,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
         BkShop.getInstance().getMenuManager().buildPageFrame(page);
 
         page.setItemOnXY(1, 3,
-                new ItemBuilder(plugin.getHandler().getItemManager().getRedWool())
+                new ItemBuilder(XMaterial.RED_WOOL)
                         .setName(plugin.getLangFile().get(owner, "gui-buttons.previous-page.name"))
                         .setLore(plugin.getLangFile().getStringList("gui-buttons.return.description")),
                 shopUser.getName().toLowerCase() + "-shops-list-back-button",

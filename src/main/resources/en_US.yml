@@ -26,17 +26,22 @@ commands:
   # Message when a player sends an incorrect usage of the command
   usage-format: '&cUsage: {usage}'
 
-  #BkShop Command
-  bkshop:
+  # BkShop Command
+  # This command can't be changed, it's only here for the help command
+  bkcommand:
     command: 'bkshop'
-    description: 'Shows the help of the plugin.'
-    usage: '/bkshop'
-
-  #Reload Command
-  bkshopreload:
-    command: 'bkshopreload'
-    description: 'Updates all the configs and messages of the plugin.'
-    usage: '/bkshopreload'
+    description: 'Help of the plugin.'
+    usage: '/bkshop [reload]'
+    subcommands:
+      config:
+        command: 'config'
+        usage: '/bkshop config'
+      reload:
+        command: 'reload'
+        usage: '/bkshop reload'
+      messages:
+        command: 'messages'
+        usage: '/bkshop messages'
 
   #Shop Command
   shop:

@@ -6,6 +6,7 @@ import me.bkrmt.bkcore.bkgui.MenuSound;
 import me.bkrmt.bkcore.bkgui.gui.Rows;
 import me.bkrmt.bkcore.bkgui.item.ItemBuilder;
 import me.bkrmt.bkcore.bkgui.page.Page;
+import me.bkrmt.bkcore.xlibs.XMaterial;
 import me.bkrmt.bkshop.BkShop;
 import me.bkrmt.bkshop.api.Shop;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class MenuManager implements me.bkrmt.bkshop.api.MenuManager {
         shopList.forEach(Shop::reloadDisplayItem);
         Collections.addAll(shops, shopList.toArray(new Shop[0]));
 
-        PagedList pagedList = new PagedList(getInstance(), null, "shops-list", shops)
+        PagedList pagedList = new PagedList(getInstance(), player, "shops-list", shops)
                 .setGuiRows(Rows.FIVE)
                 .setListRows(3)
                 .setStartingSlot(11)
@@ -40,7 +41,7 @@ public class MenuManager implements me.bkrmt.bkshop.api.MenuManager {
 
         if (pagedList.getPages().size() > 0)
             pagedList.getPages().get(0).setItemOnXY(1, 3,
-                new ItemBuilder(plugin.getHandler().getItemManager().getRedWool())
+                new ItemBuilder(XMaterial.RED_WOOL)
                     .setName(plugin.getLangFile().get(player, "gui-buttons.previous-page.name"))
                     .setLore(plugin.getLangFile().getStringList("gui-buttons.return.description"))
                     .hideTags(),

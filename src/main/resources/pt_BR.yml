@@ -26,17 +26,22 @@ commands:
   # Mensagem para quando o jogador usar o comando incorretamente
   usage-format: '&cUsage: {usage}'
 
-  #Comando BkShop
-  bkshop:
+  # BkShop Command
+  # Este comando não pode ser alterado, ele está aqui apenas para que apareça no comando de ajuda
+  bkcommand:
     command: 'bkshop'
     description: 'Mostra a ajuda do plugin.'
-    usage: '/bkshop'
-
-  #Comando Atualizar
-  bkshopreload:
-    command: 'bkshopatualizar'
-    description: 'Atualiza as configuracoes e mensagens do plugin.'
-    usage: '/bkshopatualizar'
+    usage: '/bkshop [reload]'
+    subcommands:
+      config:
+        command: 'config'
+        usage: '/bkshop config'
+      reload:
+        command: 'reload'
+        usage: '/bkshop reload'
+      messages:
+        command: 'messages'
+        usage: '/bkshop messages'
 
   #Comando Loja
   shop:

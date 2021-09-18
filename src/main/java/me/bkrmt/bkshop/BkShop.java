@@ -3,9 +3,9 @@ package me.bkrmt.bkshop;
 import me.bkrmt.bkcore.BkPlugin;
 import me.bkrmt.bkcore.bkgui.BkGUI;
 import me.bkrmt.bkcore.command.CommandModule;
-import me.bkrmt.bkcore.command.HelpCmd;
-import me.bkrmt.bkcore.command.ReloadCmd;
+import me.bkrmt.bkcore.command.MainCommand;
 import me.bkrmt.bkcore.textanimator.AnimatorManager;
+import me.bkrmt.bkcore.xlibs.XMaterial;
 import me.bkrmt.bkshop.api.MenuManager;
 import me.bkrmt.bkshop.api.ShopsManager;
 import me.bkrmt.bkshop.commands.DelShopCmd;
@@ -14,7 +14,6 @@ import me.bkrmt.bkshop.commands.ShopCmd;
 import me.bkrmt.bkshop.commands.ShopsCmd;
 import me.bkrmt.teleport.TeleportCore;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -67,8 +66,9 @@ public final class BkShop extends BkPlugin {
         }
 
         getCommandMapper()
-                .addCommand(new CommandModule(new HelpCmd(plugin, "bkshop", ""), (a, b, c, d) -> Collections.singletonList("")))
-                .addCommand(new CommandModule(new ReloadCmd(plugin, "bkshopreload", "bkshop.reload"), (a, b, c, d) -> Collections.singletonList("")))
+                .addCommand(new CommandModule(new MainCommand(plugin, "bkshop.admin", (plugin1, player, configuration) -> {
+                    player.sendMessage(getLangFile().get("commands.bkcommand.usage"));
+                }), (a, b, c, d) -> null))
                 .addCommand(new CommandModule(new ShopsCmd(plugin, "shops", "bkshop.shops"), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new DelShopCmd(plugin, "delshop", "bkshop.delshop"), (a, b, c, d) -> Collections.singletonList("")))
                 .addCommand(new CommandModule(new ShopCmd(plugin, "shop", "bkshop.shop"), (sender, b, c, args) -> {
@@ -136,34 +136,36 @@ public final class BkShop extends BkPlugin {
         ItemStack[] items = new ItemStack[3];
         switch (getFrameType()) {
             case 0:
-                items[0] = new ItemStack(Material.AIR);
-                items[1] = new ItemStack(Material.AIR);
-                items[2] = new ItemStack(Material.AIR);
+                items[0] = XMaterial.AIR.parseItem();
+                items[1] = XMaterial.AIR.parseItem();
+                items[2] = XMaterial.AIR.parseItem();
                 return items;
             case 1:
-                items[0] = new ItemStack(Material.DIAMOND);
-                items[1] = new ItemStack(Material.LADDER);
+                items[0] = XMaterial.DIAMOND.parseItem();
+                items[1] = XMaterial.LADDER.parseItem();
                 break;
             case 2:
-                items[0] = new ItemStack(Material.EMERALD);
-                items[1] = new ItemStack(Material.VINE);
+                items[0] = XMaterial.EMERALD.parseItem();
+                items[1] = XMaterial.VINE.parseItem();
                 break;
             case 3:
-                items[0] = new ItemStack(Material.IRON_INGOT);
-                items[1] = new ItemStack(BkShop.getInstance().getHandler().getItemManager().getIronBars());
+                items[0] = XMaterial.IRON_INGOT.parseItem();
+                items[1] = XMaterial.IRON_BARS.parseItem();
                 break;
             case 4:
-                items[0] = new ItemStack(Material.GOLD_INGOT);
-                items[1] = new ItemStack(BkShop.getInstance().getHandler().getItemManager().getRails());
+                items[0] = XMaterial.GOLD_INGOT.parseItem();
+                items[1] = XMaterial.RAIL.parseItem();
                 break;
         }
-        items[2] = new ItemStack(BkShop.getInstance().getHandler().getItemManager().getWhitePane());
-        ItemMeta meta = items[0].getItemMeta();
-        meta.setDisplayName(" ");
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        items[0].setItemMeta(meta);
-        items[1].setItemMeta(meta);
-        items[2].setItemMeta(meta);
+        items[2] = XMaterial.WHITE_STAINED_GLASS_PANE.parseItem();
+        if (items[0] != null && items[1] != null && items[2] != null) {
+            ItemMeta meta = items[0].getItemMeta();
+            meta.setDisplayName(" ");
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            items[0].setItemMeta(meta);
+            items[1].setItemMeta(meta);
+            items[2].setItemMeta(meta);
+        }
         return items;
     }
 
