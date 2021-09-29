@@ -10,6 +10,7 @@ import me.bkrmt.bkcore.bkgui.gui.Rows;
 import me.bkrmt.bkcore.bkgui.item.ItemBuilder;
 import me.bkrmt.bkcore.bkgui.page.Page;
 import me.bkrmt.bkcore.config.Configuration;
+import me.bkrmt.bkcore.config.InvalidLocationException;
 import me.bkrmt.bkcore.xlibs.XMaterial;
 import me.bkrmt.bkshop.api.ShopState;
 import me.bkrmt.teleport.Teleport;
@@ -57,17 +58,10 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
         this.publicData = shopConfig.getBoolean("shop.public-visits");
         this.lastVisitor = shopConfig.get("shop.last-visitor") == null ? "N\\A" : shopConfig.getString("shop.last-visitor");
         this.shopState = shopConfig.getBoolean("shop.open") ? ShopState.OPEN : ShopState.CLOSED;
-        if (shopConfig.get("shop.world") == null) {
-            if (owner.isOnline()) {
-                shopConfig.setLocation("shop", owner.getPlayer().getLocation());
-                this.location = owner.getPlayer().getLocation();
-            } else {
-                Location defaultLocation = getDefaultLocation();
-                shopConfig.setLocation("shop", defaultLocation);
-                this.location = defaultLocation;
-            }
-        } else {
+        try {
             this.location = shopConfig.getLocation("shop");
+        } catch (InvalidLocationException e) {
+            e.printStackTrace();
         }
 
         reloadDisplayItem();
@@ -92,7 +86,11 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
         this.publicData = shopConfig.getBoolean("shop.public-visits");
         this.lastVisitor = shopConfig.getString("shop.last-visitor");
         this.shopState = shopConfig.getBoolean("shop.open") ? ShopState.OPEN : ShopState.CLOSED;
-        this.location = shopConfig.getLocation("shop");
+        try {
+            this.location = shopConfig.getLocation("shop");
+        } catch (InvalidLocationException e) {
+            e.printStackTrace();
+        }
 
         reloadDisplayItem();
 //        this.displayItem = new ItemBuilder(BkShop.getInstance().getCustomTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDVjNmRjMmJiZjUxYzM2Y2ZjNzcxNDU4NWE2YTU2ODNlZjJiMTRkNDdkOGZmNzE0NjU0YTg5M2Y1ZGE2MjIifX19"));
@@ -156,15 +154,7 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
 
     @Override
     public Location getLocation() {
-        return location == null ? getDefaultLocation() : location;
-    }
-
-    private Location getDefaultLocation() {
-        BkShop.getInstance().sendConsoleMessage(
-            InternalMessages.INVALID_LOCATION.getMessage(BkShop.getInstance())
-                .replace("{0}", getConfig().getFile().getName())
-        );
-        return new Location(Bukkit.getWorld("world"), 0, 0, 0);
+        return location;
     }
 
     @Override
@@ -276,7 +266,8 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     public int getPage() {
         return -1;
     }
-///////
+
+    ///////
     @Override
     public void setIgnorePage(boolean ignorePage) {
 
@@ -296,12 +287,15 @@ public class Shop implements me.bkrmt.bkshop.api.Shop {
     public boolean isIgnoreSlot() {
         return false;
     }
-//////////
+
+    //////////
     @Override
-    public void setPage(int slot) {}
+    public void setPage(int slot) {
+    }
 
     @Override
-    public void setSlot(int slot) {}
+    public void setSlot(int slot) {
+    }
 
     @Override
     public List<String> getLore(PagedList list, Page currentPage) {

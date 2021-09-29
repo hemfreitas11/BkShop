@@ -23,7 +23,12 @@ public class SetShop extends Executor {
             if (args.length == 0) {
                 sendUsage(sender);
             } else if (args.length == 1) {
-                if (args[0].equalsIgnoreCase(getPlugin().getLangFile().get(((Player) sender), "commands." + getLangKey() + ".subcommands.shop"))) BkShop.getInstance().getShopsManager().setShop(sender);
+                if (args[0].equalsIgnoreCase(getPlugin().getLangFile().get(((Player) sender), "commands." + getLangKey() + ".subcommands.shop"))) {
+                    if (Utils.containsEqual(getPlugin().getConfigManager().getConfig().getStringList("blocked-worlds"), ((Player) sender).getLocation().getWorld().getName()))
+                        sender.sendMessage(getPlugin().getLangFile().get(((Player) sender), "error.blocked-world"));
+                    else
+                        BkShop.getInstance().getShopsManager().setShop(sender);
+                }
                 else if (args[0].equals(getPlugin().getLangFile().get(((Player) sender), "commands." + getLangKey() + ".subcommands.color")))
                     sender.sendMessage(getPlugin().getLangFile().get(((Player) sender), "error.no-color"));
                 else sendUsage(sender);

@@ -3,6 +3,10 @@ version: ${project.version}
 main: me.bkrmt.bkshop.BkShop
 api-version: 1.13
 softdepend:
+  - Multiverse-Core*
+  - Multiverse-Core
+  - MultiWorld
+  - WorldManager
   - PlaceholderAPI
 authors: [Bkr__]
 description: 'Setshop plugin'

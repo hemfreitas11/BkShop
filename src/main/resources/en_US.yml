@@ -166,6 +166,7 @@ info:
 
 # *----------------*=/[Error Messages]\=*---------------*
 error:
+  blocked-world: '&cYou can''t create shops in this world.'
   invalid-page: '&cThe page number {page} does''t exist.'
   invalid-message: '&cThe message may contain only letters, numbers or color symbols.'
   large-message: '&cThe message must have a maximum of 64 characters.'

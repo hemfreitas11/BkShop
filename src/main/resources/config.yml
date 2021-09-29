@@ -16,6 +16,11 @@
 # Languages that come with the plugin are: en_US and pt_BR. You can add any language by changing the file name to the language you want and editing the file.
 language: en_US
 
+# Players will be blocked from setting their shops in these worlds
+blocked-worlds:
+  - 'example1'
+  - 'example2'
+
 # The maximum size of a message that a player can set for their shop. Setting this too high makes the shop list look awful
 max-message-length: 60
 

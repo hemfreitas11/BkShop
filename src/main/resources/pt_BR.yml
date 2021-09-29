@@ -167,6 +167,7 @@ info:
 
 # *--------------*=/[Mensagem de Erro]\=*---------------*
 error:
+  blocked-world: '&cVocê não pode criar lojas nesse mundo.'
   invalid-page: '&cA pagina numero {page} nao existe.'
   invalid-message: '&cA mensagem pode conter apenas letras, numeros ou simbolos de cor.'
   large-message: '&cA mensagem deve ter no maximo 64 caracteres.'
